@@ -96,36 +96,56 @@ const ScheduleComponent = () => {
   });
 
   return (
-    <div className="flex flex-col">
-      <div className="grid grid-cols-7 gap-1 mb-2">
-        {datesAndDays.map(({ formattedDate, formattedDay }, index) => (
-          <div key={index} className="flex flex-col items-center">
-            <div className="text-xs">{formattedDate}</div>
-            <div className="text-lg">{formattedDay}</div>
-          </div>
-        ))}
+    <div className="flex">
+      <div className="flex flex-col text-sm pr-2">
+        {/* Empty div to align the first timestamp with the first cell */}
+        <div style={{ height: '15px' }}></div>
+        {hours
+          .filter((_, index) => index % 2 === 0)
+          .map((hour, index) => (
+            // Adjust top margin to create more spacing
+            <div
+              key={index}
+              style={{ height: '60px' }}
+              className="flex justify-end items-center"
+            >
+              <span>{hour}</span>
+            </div>
+          ))}
+        {/* Empty div at the bottom to ensure the last timestamp aligns correctly */}
+        <div style={{ height: '15px' }}></div>
       </div>
-      <div className="grid grid-cols-7 gap-1">
-        {days.map((day, dayIndex) => (
-          <div key={dayIndex} className="flex flex-col space-y-1">
-            {hours.map((hour, hourIndex) => (
-              <div
-                key={hourIndex}
-                className={`flex justify-center items-center border border-gray-300`}
-                style={{
-                  width: '80px',
-                  height: '30px',
-                  backgroundColor: selectedCells[`${day}-${hour}`]
-                    ? '#10B981'
-                    : 'white',
-                }}
-                onMouseDown={() => handleMouseDown(day, hour)}
-                onMouseEnter={() => handleMouseEnter(day, hour)}
-                onMouseUp={handleMouseUp}
-              ></div>
-            ))}
-          </div>
-        ))}
+      <div className="flex flex-col flex-1">
+        <div className="grid grid-cols-7 gap-1 mb-2">
+          {datesAndDays.map(({ formattedDate, formattedDay }, index) => (
+            <div key={index} className="flex flex-col items-center">
+              <div className="text-xs">{formattedDate}</div>
+              <div className="text-lg">{formattedDay}</div>
+            </div>
+          ))}
+        </div>
+        <div className="grid grid-cols-7 gap-1">
+          {days.map((day, dayIndex) => (
+            <div key={dayIndex} className="flex flex-col space-y-1">
+              {hours.map((hour, hourIndex) => (
+                <div
+                  key={hourIndex}
+                  className={`flex justify-center items-center border border-gray-300`}
+                  style={{
+                    width: '80px',
+                    height: '30px',
+                    backgroundColor: selectedCells[`${day}-${hour}`]
+                      ? '#10B981'
+                      : 'white',
+                  }}
+                  onMouseDown={() => handleMouseDown(day, hour)}
+                  onMouseEnter={() => handleMouseEnter(day, hour)}
+                  onMouseUp={handleMouseUp}
+                ></div>
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -59,8 +59,6 @@ const Form = () => {
     <div className="w-1/3 bg-white rounded-3xl shadow-md">
       <h2 className="text-4xl font-bold mb-3 p-4">Create a New Event</h2>
       <form onSubmit={handleSubmit}>
-
-   
         
         <div className="mb-4">
           <label htmlFor="eventName" className="block text-sm font-medium text-blue-500">

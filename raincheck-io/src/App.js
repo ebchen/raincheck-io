@@ -4,16 +4,18 @@ import ScheduleComponent from './ScheduleComponent';
 import Sidebar from './Sidebar';
 import Form from './Form';
 import React from 'react';
+import Cal from './Calendar';
 
 function App() {
   return (
     <div className="App">
-      <Form />
+      <Cal />
       <header className="App-header">
           <ScheduleComponent />
       </header>
         {/* <Sidebar />
-        <NavBar /> */}
+        <NavBar />
+        <Form /> */}
         
     </div>
   );

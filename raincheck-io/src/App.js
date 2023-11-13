@@ -9,13 +9,14 @@ import Cal from './Calendar';
 function App() {
   return (
     <div className="App">
-      <Cal />
+      
       <header className="App-header">
           <ScheduleComponent />
       </header>
         {/* <Sidebar />
         <NavBar />
-        <Form /> */}
+        <Form /> 
+        <Cal />*/}
         
     </div>
   );

@@ -40,7 +40,7 @@ const Form = () => {
     // later lmao
   };
 
-  // Function to generate an array of hours 
+  // Function to generate an array of hours
   const generateHours = () => {
     const hours = [];
     for (let i = 1; i <= 11; i++) {
@@ -50,18 +50,26 @@ const Form = () => {
   };
 
   // List of timezones
-  const timezones = ['UTC', 'EST', 'PST', 'America/New_York', 'Europe/London', 'Asia/Tokyo', /* Add more as needed */];
-
+  const timezones = [
+    'UTC',
+    'EST',
+    'PST',
+    'America/New_York',
+    'Europe/London',
+    'Asia/Tokyo' /* Add more as needed */,
+  ];
 
   const hours = generateHours();
 
   return (
-    <div className="w-1/3 bg-white rounded-3xl shadow-md">
+    <div className="w-full lg:w-1/2 bg-white rounded-3xl shadow-md items-center justify-center py-8 px-4">
       <h2 className="text-4xl font-bold mb-3 p-4">Create a New Event</h2>
       <form onSubmit={handleSubmit}>
-        
         <div className="mb-4">
-          <label htmlFor="eventName" className="block text-sm font-medium text-blue-500">
+          <label
+            htmlFor="eventName"
+            className="block text-sm font-medium text-blue-500"
+          >
             Event Name <span className="text-red-500">*</span>
           </label>
           <input
@@ -76,9 +84,8 @@ const Form = () => {
           />
         </div>
 
-
         <label className="block text-sm font-medium text-blue-500 mb-2">
-            Calendar Type <span className="text-red-500">*</span>
+          Calendar Type <span className="text-red-500">*</span>
         </label>
         <div className="mb-4 flex justify-center">
           <div className="flex">
@@ -102,10 +109,10 @@ const Form = () => {
             </button>
           </div>
         </div>
-        
+
         <label className="block text-sm font-medium text-blue-500">
-            Time Range <span className="text-red-500">*</span>
-          </label>
+          Time Range <span className="text-red-500">*</span>
+        </label>
         <div className="mb-4 flex justify-center">
           <select
             id="startTime"
@@ -116,20 +123,20 @@ const Form = () => {
             required
           >
             {hours.map((hour) => (
-                <option key={`${hour}:00-AM`} value={`${hour}:00 AM`}>
+              <option key={`${hour}:00-AM`} value={`${hour}:00 AM`}>
                 {`${hour}:00 AM`}
-                </option>
+              </option>
             ))}
             <option key={`12:00-PM`} value={`12:00 PM`}>
-                12:00 PM
+              12:00 PM
             </option>
             {hours.slice(1).map((hour) => (
-                <option key={`${hour}:00-PM`} value={`${hour}:00 PM`}>
+              <option key={`${hour}:00-PM`} value={`${hour}:00 PM`}>
                 {`${hour}:00 PM`}
-                </option>
+              </option>
             ))}
             <option key={`12:00-PM`} value={`12:00 PM`}>
-                12:00 AM
+              12:00 AM
             </option>
           </select>
 
@@ -145,68 +152,68 @@ const Form = () => {
             required
           >
             {hours.map((hour) => (
-                <option key={`${hour}:00-AM`} value={`${hour}:00 AM`}>
+              <option key={`${hour}:00-AM`} value={`${hour}:00 AM`}>
                 {`${hour}:00 AM`}
-                </option>
+              </option>
             ))}
             <option key={`12:00-PM`} value={`12:00 PM`}>
-                12:00 PM
+              12:00 PM
             </option>
             {hours.slice(1).map((hour) => (
-                <option key={`${hour}:00-PM`} value={`${hour}:00 PM`}>
+              <option key={`${hour}:00-PM`} value={`${hour}:00 PM`}>
                 {`${hour}:00 PM`}
-                </option>
+              </option>
             ))}
             <option key={`12:00-PM`} value={`12:00 PM`}>
-                12:00 AM
+              12:00 AM
             </option>
           </select>
         </div>
 
         <label className="block text-sm font-medium text-blue-500 ml-2 mt-3">
-            Timezone <span className="text-red-500">*</span>
+          Timezone <span className="text-red-500">*</span>
         </label>
         <div className="mb-4 flex justify-center">
-            <select
+          <select
             id="timezone"
             name="timezone"
             value={timezone}
             onChange={handleTimezoneChange}
             className="mt-1 p-2 border rounded-md ml-2"
             required
-            >
+          >
             {timezones.map((tz) => (
-                <option key={tz} value={tz}>
+              <option key={tz} value={tz}>
                 {tz}
-                </option>
+              </option>
             ))}
-            </select>
+          </select>
         </div>
 
         <div className="ml-4 flex items-center justify-center">
-            <label htmlFor="wantNotifications" className="ml-2 text-sm text-blue-500">
-              Want notifications? 
-            </label>
+          <label
+            htmlFor="wantNotifications"
+            className="ml-2 text-sm text-blue-500"
+          >
+            Want notifications?
+          </label>
 
-            <input
-              type="checkbox"
-              id="wantNotifications"
-              name="wantNotifications"
-              checked={wantNotifications}
-              onChange={handleWantNotificationsChange}
-              className="form-checkbox h-4 w-4 text-blue-500 ml-4"
-            />
+          <input
+            type="checkbox"
+            id="wantNotifications"
+            name="wantNotifications"
+            checked={wantNotifications}
+            onChange={handleWantNotificationsChange}
+            className="form-checkbox h-4 w-4 text-blue-500 ml-4"
+          />
         </div>
 
-
-        <button 
-  type="submit"
-  className="bg-blue-500 font-bold text-white px-20 py-2 rounded-md text-2xl hover:bg-blue-700 mt-4 mb-4"
->
-  Create  
-</button>
-
-
+        <button
+          type="submit"
+          className="bg-blue-500 font-bold text-white px-20 py-2 rounded-md text-2xl hover:bg-blue-700 mt-4 mb-4"
+        >
+          Create
+        </button>
       </form>
     </div>
   );

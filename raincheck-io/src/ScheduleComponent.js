@@ -15,7 +15,7 @@ const formatDay = (date) => {
 // Starting date for the schedule
 const startDate = new Date(2023, 7, 2); // Assuming the start date is August 2, 2023
 
-const days = ['Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Mon', 'Tue'];
+const days = ['Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Mon'];
 const hours = [
   '9:00AM',
   '9:30AM',

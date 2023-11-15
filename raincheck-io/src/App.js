@@ -9,15 +9,17 @@ import Cal from './Calendar';
 function App() {
   return (
     <div className="App">
-      
-      <header className="App-header">
-          <ScheduleComponent />
+      {/* <header className="App-header">
+        <ScheduleComponent />
       </header>
-        {/* <Sidebar />
-        <NavBar />
-        <Form /> 
-        <Cal />*/}
-        
+
+      <Sidebar /> */}
+      <div className="flex justify-center items-center h-screen">
+        <div className="flex flex-row justify-around items-center w-full max-w-4xl mx-auto p-4">
+          <Form />
+          <Cal />
+        </div>
+      </div>
     </div>
   );
 }

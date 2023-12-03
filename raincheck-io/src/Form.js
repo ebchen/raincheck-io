@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const Form = () => {
+const Form = ({setMode}) => {
   // State to store the event name
   const [eventName, setEventName] = useState('');
   const [calendarType, setCalendarType] = useState('specificDates');
@@ -18,6 +18,7 @@ const Form = () => {
 
   const handleCalendarTypeChange = (selectedType) => {
     setCalendarType(selectedType);
+    setMode(selectedType)
   };
 
   const handleStartTimeChange = (e) => {
@@ -67,9 +68,10 @@ const Form = () => {
   const hours = generateHours();
 
   return (
-    <div className="w-full lg:w-1/2 bg-white rounded-3xl shadow-md items-center justify-center py-8 px-4">
-      <h2 className="text-4xl font-bold mb-3 p-4">Create a New Event</h2>
-      <form onSubmit={handleSubmit}>
+    <div className="w-full lg:w-1/2 bg-white rounded-md shadow-md items-center justify-center py-8 px-8 mx-28">
+      <h2 className="text-3xl font-bold mb-3 p-4 text-center">Create a New Event</h2>
+      <div className='flex justify-center'>
+      <form onSubmit={handleSubmit} className=''>
         <div className="mb-4">
           {/* if useHeader is true, then include Event Name header */}
           {useHeaders && (
@@ -88,7 +90,7 @@ const Form = () => {
             value={eventName}
             onChange={handleEventNameChange}
             placeholder="Enter an event name"
-            className="mt-1 p-2 border rounded-md ml-2 placeholder-gray-500"
+            className="mt-1 p-2 border rounded-md ml-2 placeholder-gray-500 w-full"
             required
           />
         </div>
@@ -99,13 +101,13 @@ const Form = () => {
           </label>
         )}
 
-        <div className="mb-4 flex justify-center">
+        <div className="mb-4 flex justify-start">
           <div className="flex">
             <button
               type="button"
               onClick={() => handleCalendarTypeChange('specificDates')}
-              className={`bg-blue-500 text-white px-4 py-2 rounded-md mr-4 ${
-                calendarType === 'specificDates' && 'bg-blue-700'
+              className={`text-white px-4 py-2 rounded-l-md ${
+                calendarType === 'specificDates' ? 'bg-blue-700' : 'bg-slate-400'
               }`}
             >
               Specific Dates
@@ -113,8 +115,8 @@ const Form = () => {
             <button
               type="button"
               onClick={() => handleCalendarTypeChange('daysOfWeek')}
-              className={`bg-blue-500 text-white px-4 py-2 rounded-md ${
-                calendarType === 'daysOfWeek' && 'bg-blue-700'
+              className={`text-white px-4 py-2 rounded-r-md ${
+                calendarType === 'daysOfWeek' ? 'bg-blue-700' : 'bg-slate-400'
               }`}
             >
               Days of the Week
@@ -127,13 +129,13 @@ const Form = () => {
           </label>
         )}
 
-        <div className="mb-4 flex justify-center">
+        <div className="mb-4 flex justify-start">
           <select
             id="startTime"
             name="startTime"
             value={startTime}
             onChange={handleStartTimeChange}
-            className="mt-1 p-2 border rounded-md ml-2"
+            className="mt-1 p-2 border rounded-md"
             required
           >
             {hours.map((hour) => (
@@ -190,13 +192,13 @@ const Form = () => {
           </label>
         )}
 
-        <div className="mb-4 flex justify-center">
+        <div className="mb-4 flex justify-start">
           <select
             id="timezone"
             name="timezone"
             value={timezone}
             onChange={handleTimezoneChange}
-            className="mt-1 p-2 border rounded-md ml-2"
+            className="mt-1 p-2 border rounded-md"
             required
           >
             {timezones.map((tz) => (
@@ -207,8 +209,8 @@ const Form = () => {
           </select>
         </div>
 
-        <div className="ml-4">
-          <div className="flex items-center justify-center">
+        <div className="">
+          <div className="flex items-center justify-start">
             <label
               htmlFor="wantNotifications"
               className="text-sm text-blue-500"
@@ -244,20 +246,24 @@ const Form = () => {
                 value={notificationEmail}
                 onChange={handleNotificationEmailChange}
                 placeholder="Enter your email"
-                className="mt-1 p-2 border rounded-md ml-2 placeholder-gray-500 w-full"
+                className="mt-1 p-2 border rounded-md placeholder-gray-500 w-full"
                 required
               />
             </div>
           )}
         </div>
+        <div className='flex justify-center'>
+          <button
+            type="submit"
+            className="bg-blue-500 font-bold text-white px-20 py-2 rounded-md text-xl hover:bg-blue-700 mt-4 mb-4"
+          >
+            Create
+          </button>
+        </div>
 
-        <button
-          type="submit"
-          className="bg-blue-500 font-bold text-white px-20 py-2 rounded-md text-2xl hover:bg-blue-700 mt-4 mb-4"
-        >
-          Create
-        </button>
       </form>
+      </div>
+
     </div>
   );
 };

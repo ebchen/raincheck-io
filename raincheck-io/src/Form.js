@@ -57,13 +57,35 @@ const Form = ({setMode}) => {
 
   // List of timezones
   const timezones = [
-    'UTC',
-    'EST',
-    'PST',
-    'America/New_York',
-    'Europe/London',
-    'Asia/Tokyo' /* Add more as needed */,
+    'ET (Eastern Time)',
+    'UTC (Coordinated Universal Time)',
+    'GMT (Greenwich Mean Time)',
+    'CT (Central Time)',
+    'MT (Mountain Time)',
+    'PT (Pacific Time)',
+    'MST (Mountain Standard Time)',
+    'CST (Central Standard Time)',
+    'EST (Eastern Standard Time)',
+    'AST (Atlantic Standard Time)',
+    'AKT (Alaska Time)',
+    'HST (Hawaii-Aleutian Standard Time)',
+    'CET (Central European Time)',
+    'CEST (Central European Summer Time)',
+    'JST (Japan Standard Time)',
+    'CST (China Standard Time)',
+    'GST (Gulf Standard Time)',
+    'IST (Indian Standard Time)',
+    'AEST (Australian Eastern Standard Time)',
+    'AEDT (Australian Eastern Daylight Time)',
+    'ACST (Australian Central Standard Time)',
+    'ACDT (Australian Central Daylight Time)',
+    'AWST (Australian Western Standard Time)',
+    'NZST (New Zealand Standard Time)',
+    'NZDT (New Zealand Daylight Time)',
+    'NST (Newfoundland Standard Time)',
+    'NDT (Newfoundland Daylight Time)',
   ];
+  
 
   const hours = generateHours();
 

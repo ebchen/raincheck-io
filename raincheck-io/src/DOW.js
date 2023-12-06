@@ -1,81 +1,10 @@
 import { useState } from 'react';
 
-const Cal = () => {
-  const months = {
-    January: 31,
-    February: 29,
-    March: 31,
-    April: 30,
-    May: 31,
-    June: 30,
-    July: 31,
-    August: 31,
-    September: 30,
-    October: 31,
-    November: 30,
-    December: 31,
-  };
-
-  const monthsOrder = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-  ];
-
-  const [month, setMonth] = useState('January');
-  const [year, setYear] = useState(2024)
-  const [dates, setDates] = useState(31);
+const DOW = () => {
+  const [dates, setDates] = useState(7);
   const [selectedDates, setSelectedDates] = useState([]);
   const [startDOW, setStartDOW] = useState("Mo");
   const dOW = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
-
-  const updateStartDOW = (newMonth) => {
-    const dayIndex = dOW.indexOf(startDOW);
-    const lastDayIndex = (dayIndex + months[month] - 1) % 7;
-    const newStartDOW = dOW[(lastDayIndex + 1) % 7];
-    setStartDOW(newStartDOW);
-  };
-  
-  // 31st is a Sunday, so then what is the first?
-
-  const updateStartDOWForDecrement = (newMonth) => {
-    const dayIndex = dOW.indexOf(startDOW);
-    const newLastDayIndex = (dayIndex - 1 + 7) % 7; // Go one day back for last day of new month
-    const newFirstDayIndex = (newLastDayIndex - ((months[newMonth] - 1) % 7) + 7) % 7; // Calculate first day of new month
-    console.log(newFirstDayIndex)
-    console.log(dOW[newFirstDayIndex ])
-    setStartDOW(dOW[newFirstDayIndex ]);
-  };
-  
-  const decrementMonth = () => {
-    const newMonthIndex = (monthsOrder.length + monthsOrder.indexOf(month) - 1) % monthsOrder.length;
-    const newMonth = monthsOrder[newMonthIndex];
-    if (newMonth === "December") {
-      setYear(year - 1)
-    }
-    setMonth(newMonth);
-    setDates(months[newMonth]);
-    updateStartDOWForDecrement(newMonth);
-  };
-  
-  const incrementMonth = () => {
-    const newMonth = monthsOrder[(monthsOrder.indexOf(month) + 1) % monthsOrder.length];
-    if (newMonth === "January") {
-      setYear(year + 1)
-    }
-    setMonth(newMonth);
-    setDates(months[newMonth]);
-    updateStartDOW(newMonth);
-  };  
 
   const daysArray = Array.from({ length: dates }, (_, i) => i + 1);
 
@@ -96,52 +25,8 @@ const Cal = () => {
               tabindex="0"
               class="focus:outline-none  text-base font-bold dark:text-gray-100 text-gray-800"
             >
-              {month} {year}
+              Days of Week
             </span>
-            <div class="flex items-center">
-              <button
-                aria-label="calendar backward"
-                onClick={() => decrementMonth()}
-                class="focus:text-gray-400 hover:text-gray-400 text-gray-800 dark:text-gray-100"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="icon icon-tabler icon-tabler-chevron-left"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  fill="none"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                  <polyline points="15 6 9 12 15 18" />
-                </svg>
-              </button>
-              <button
-                aria-label="calendar forward"
-                onClick={() => incrementMonth()}
-                class="focus:text-gray-400 hover:text-gray-400 ml-3 text-gray-800 dark:text-gray-100"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="icon icon-tabler  icon-tabler-chevron-right"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  fill="none"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                  <polyline points="9 6 15 12 9 18" />
-                </svg>
-              </button>
-            </div>
           </div>
           <div class="flex items-center justify-between pt-12 overflow-x-auto">
             <table class="w-full">
@@ -173,7 +58,7 @@ const Cal = () => {
                           .map((_, dayIndex) => {
                             const baseClass =
                               'text-base font-medium flex items-center justify-center w-8 h-8';
-                            const dayNumber = weekIndex * 7 + dayIndex + 1;
+                            const dayNumber = weekIndex * 7 + dayIndex;
                             const isSelected =
                               selectedDates.includes(dayNumber);
                             if (dayNumber <= dates) {
@@ -189,13 +74,13 @@ const Cal = () => {
                                         tabIndex="0"
                                         className={`focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-700 focus:bg-blue-500 hover:bg-blue-500 text-white bg-blue-700 rounded-lg ${baseClass}`}
                                       >
-                                        {dayNumber}
+                                        ✔
                                       </a>
                                     ) : (
                                       <p
-                                        className={`text-gray-500 dark:text-gray-100 ${baseClass}`}
+                                        className={`text-gray-500 dark:text-gray-100 outline-dotted rounded-lg ${baseClass}`}
                                       >
-                                        {dayNumber}
+                                        ✗
                                       </p>
                                     )}
                                   </div>
@@ -228,4 +113,4 @@ const Cal = () => {
   );
 };
 
-export default Cal;
+export default DOW;

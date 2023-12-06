@@ -3,6 +3,7 @@ import { FcGoogle } from 'react-icons/fc';
 
 const AvailabilityComponent = () => {
   const [name, setName] = useState('');
+  const [showInput, setShowInput] = useState(true);
 
   const handleNameChange = (e) => {
     setName(e.target.value);
@@ -14,6 +15,7 @@ const AvailabilityComponent = () => {
 
   const handleAddAvailability = () => {
     // Handle adding availability 
+    setShowInput(false);
   };
 
   return (
@@ -21,16 +23,20 @@ const AvailabilityComponent = () => {
       <h2 className="text-2xl font-bold mb-0 p-3 text-center">Add your Availability</h2>
       
       <div className="flex flex-col items-center">
-        <input
-          type="text"
-          id="name"
-          name="name"
-          value={name}
-          onChange={handleNameChange}
-          placeholder="Enter your name"
-          className="mt-1 p-2 border rounded-md placeholder-gray-500 w-full mb-4"
-          required
-        />   
+        {showInput ? (
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={name}
+            onChange={handleNameChange}
+            placeholder="Enter your name"
+            className="mt-1 p-2 border rounded-md placeholder-gray-500 w-full mb-4"
+            required
+          />
+        ) : (
+          <p className="text-xl font-bold mb-4">{name}</p>
+        )}
 
         <button
           type="button"

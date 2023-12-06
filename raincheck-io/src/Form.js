@@ -8,7 +8,7 @@ const Form = () => {
   const [endTime, setEndTime] = useState('05:00 PM');
   const [timezone, setTimezone] = useState('EST');
   const [wantNotifications, setWantNotifications] = useState(false);
-  const [useHeaders, setUseHeaders] = useState(true);
+  const [useHeaders, setUseHeaders] = useState(true); // toggle false or true
   const [notificationEmail, setNotificationEmail] = useState(''); // New state for email
 
   // Function to handle changes in the event name input
@@ -55,14 +55,7 @@ const Form = () => {
   };
 
   // List of timezones
-  const timezones = [
-    'UTC',
-    'EST',
-    'PST',
-    'America/New_York',
-    'Europe/London',
-    'Asia/Tokyo' /* Add more as needed */,
-  ];
+  const timezones = ['UTC', 'EST', 'PST'];
 
   const hours = generateHours();
 

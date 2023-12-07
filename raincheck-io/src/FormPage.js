@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Form from './Form';
 import Cal from './Calendar'; // Import your Calendar component
 import DOW from './DOW';
+import NavBar from './Navbar';
 
 const FormPage = () => {
   const navigate = useNavigate(); // Replaces useHistory
@@ -18,6 +19,7 @@ const FormPage = () => {
 
   return (
     <div className="flex justify-center items-center bg-gray-100">
+      <NavBar />
       <div className="flex flex-row justify-center items-center ">
         <div className="flex ">
           <Form

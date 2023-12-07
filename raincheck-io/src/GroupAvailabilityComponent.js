@@ -58,9 +58,9 @@ const People = () => {
 
 // hardcoded for now
 const initialAvailabilityData = [
-  { time: 'Fri, May 13: 11:30AM - 1:00PM', peopleAvailable: 3 },
-  { time: 'Sun, May 15: 2:00AM - 3:30PM', peopleAvailable: 5 },
-  { time: 'Tues, May 17: 12:00PM - 1:00PM', peopleAvailable: 2 },
+  { time: 'Wed, Aug 2: 9:00AM - 10:30AM', peopleAvailable: 3 },
+  { time: 'Sat, Aug 5: 1:00PM - 3:30PM', peopleAvailable: 5 },
+  { time: 'Tues, Aug 8: 2:00PM - 3:00PM', peopleAvailable: 2 },
 ];
 
 const BestTimesComponent = ({ availabilityData, totalPeople }) => {
@@ -112,7 +112,7 @@ const GroupAvailabilityComponent = () => {
 
   // update total number of people later
   const updateTotalPeople = () => {
-    const newTotalPeople = 6;
+    const newTotalPeople = 4;
     setTotalPeople(newTotalPeople);
   };
 
@@ -128,7 +128,7 @@ const GroupAvailabilityComponent = () => {
   }, []);
 
   return (
-    <div className="h-full w-full lg:w-2/3 bg-white rounded-md shadow-md items-center justify-center py-8 px-8 ">
+    <div className="h-full w-full lg:w-2/3 bg-white rounded-md shadow-md items-center justify-center py-4 px-8 ">
       <h2 className="text-2xl font-bold mb-4 p-3 text-center">
         Group Availability
       </h2>

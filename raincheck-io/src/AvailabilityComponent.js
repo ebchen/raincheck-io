@@ -19,12 +19,16 @@ const AvailabilityComponent = () => {
   };
 
   return (
-    <div className="flex flex-col flex-grow h-full w-full lg:w-1/3 bg-white rounded-md shadow-md items-center justify-center pt-8 pb-10 px-8 ">
-      <h2 className="text-2xl font-bold mb-0 p-3 text-center">
-        Add your Availability
-      </h2>
+    <div className="flex flex-col flex-grow h-300 w-full lg:w-1/3 bg-white rounded-md shadow-md items-center justify-center py-10 px-8 ">
+      {showInput ? (
+        <h2 className="text-2xl font-bold mb-0 p-3 text-center">
+          Add your Availability
+        </h2>
+      ) : (
+        <h2 className="text-2xl font-bold mb-0 p-3 text-center">Edit Name</h2>
+      )}
 
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center h-full">
         {showInput ? (
           <input
             type="text"
@@ -43,7 +47,7 @@ const AvailabilityComponent = () => {
         <button
           type="button"
           onClick={handleSyncCalendar}
-          className="bg-white font-bold text-blue-500 border border-blue-500 py-2 rounded-md text-base hover:bg-blue-100 w-full mb-4  flex items-center justify-center"
+          className="bg-white font-bold text-blue-500 border border-blue-500 py-2 rounded-md text-base hover:bg-blue-100 w-full mb-4  flex items-center justify-center px-2"
         >
           <FcGoogle className="w-6 h-6 mr-1" />
           <span className="ml-2">Sync your Google Calendar</span>
@@ -52,9 +56,9 @@ const AvailabilityComponent = () => {
         <button
           type="button"
           onClick={handleAddAvailability}
-          className="bg-blue-500 text-white px-20 py-2 rounded-md text-xl hover:bg-blue-700 mb-2"
+          className="bg-blue-500 w-full text-white px-10 py-2 rounded-md text-xl hover:bg-blue-700 mb-2"
         >
-          Add Availability
+          {showInput ? 'Add Availability' : 'Edit Name'}
         </button>
       </div>
     </div>

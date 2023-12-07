@@ -29,10 +29,6 @@ const SchedulePage = () => {
     '1:00PM',
     '1:30PM',
     '2:00PM',
-    '2:30PM',
-    '3:00PM',
-    '3:30PM',
-    '4:00PM',
   ]; // Doubled for each hour
 
   // Helper function to format the date in "MMM D" format
@@ -48,7 +44,7 @@ const SchedulePage = () => {
   };
 
   const generateRandomAvailability = (myName) => {
-    const names = ['Sahitya', 'Era', 'Jeff'];
+    const names = ['Sahitya', 'Era', 'Jeff', 'Eric'];
     const dummyData = {};
 
     days.forEach((day) => {
@@ -137,13 +133,15 @@ const SchedulePage = () => {
   return (
     <div className="flex flex-row justify-around items-center w-full max-w-6xl mx-auto p-4 bg-gray-50">
       <Sidebar />
-      <div className="flex flex-col justify-center items-center">
+      <div className="mx-4"></div>
+      <div className="flex flex-col justify-center items-center pt-4">
         <div className="flex flex-row items-center justify-start w-full">
           <h1 className="text-4xl font-bold mb-3 p-4">{eventName}</h1>
-          <CopyLinkComponent />
+          <CopyLinkComponent eventName={eventName} />
         </div>
         <div className="flex flex-row justify-center items-start">
           <AvailabilityComponent />
+          <div className="mx-4"></div>
           <GroupAvailabilityComponent />
         </div>
 

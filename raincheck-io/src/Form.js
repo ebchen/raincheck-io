@@ -8,7 +8,7 @@ const Form = ({setMode}) => {
   const [endTime, setEndTime] = useState('05:00 PM');
   const [timezone, setTimezone] = useState('EST');
   const [wantNotifications, setWantNotifications] = useState(false);
-  const [useHeaders, setUseHeaders] = useState(true);
+  const [useHeaders, setUseHeaders] = useState(false);
   const [notificationEmail, setNotificationEmail] = useState(''); // New state for email
 
   // Function to handle changes in the event name input
@@ -90,7 +90,7 @@ const Form = ({setMode}) => {
             value={eventName}
             onChange={handleEventNameChange}
             placeholder="Enter an event name"
-            className="mt-1 p-2 border rounded-md ml-2 placeholder-gray-500 w-full"
+            className="mt-1 p-2 border rounded-md placeholder-gray-500 w-full"
             required
           />
         </div>
@@ -135,7 +135,7 @@ const Form = ({setMode}) => {
             name="startTime"
             value={startTime}
             onChange={handleStartTimeChange}
-            className="mt-1 p-2 border rounded-md"
+            className="mt-1 p-2 border rounded-md w-full"
             required
           >
             {hours.map((hour) => (
@@ -164,7 +164,7 @@ const Form = ({setMode}) => {
             name="endTime"
             value={endTime}
             onChange={handleEndTimeChange}
-            className="mt-1 p-2 border rounded-md ml-2"
+            className="mt-1 p-2 border rounded-md ml-2 w-full"
             required
           >
             {hours.map((hour) => (
@@ -187,7 +187,7 @@ const Form = ({setMode}) => {
         </div>
 
         {useHeaders && (
-          <label className="block text-sm font-medium text-blue-500 ml-2 mt-3">
+          <label className="block text-sm font-medium text-blue-500 mt-3">
             Timezone <span className="text-red-500">*</span>
           </label>
         )}
@@ -198,7 +198,7 @@ const Form = ({setMode}) => {
             name="timezone"
             value={timezone}
             onChange={handleTimezoneChange}
-            className="mt-1 p-2 border rounded-md"
+            className="mt-1 p-2 border rounded-md w-full"
             required
           >
             {timezones.map((tz) => (

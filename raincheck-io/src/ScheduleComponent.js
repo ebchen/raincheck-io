@@ -1,88 +1,102 @@
 import React, { useState } from 'react';
 
-// Helper function to format the date in "MMM D" format
-const formatDate = (date) => {
-  const options = { month: 'short', day: 'numeric' };
-  return date.toLocaleDateString('en-US', options);
-};
-
-// Helper function to format the day in "EEE" format
-const formatDay = (date) => {
-  const options = { weekday: 'short' };
-  return date.toLocaleDateString('en-US', options);
-};
-
-// Starting date for the schedule
-const startDate = new Date(2023, 7, 2); // Assuming the start date is August 2, 2023
-
-const days = ['Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Mon'];
-const hours = [
-  '9:00AM',
-  '9:30AM',
-  '10:00AM',
-  '10:30AM',
-  '11:00AM',
-  '11:30AM',
-  '12:00PM',
-  '12:30PM',
-  '1:00PM',
-  '1:30PM',
-  '2:00PM',
-  '2:30PM',
-  '3:00PM',
-  '3:30PM',
-  '4:00PM',
-]; // Doubled for each hour
-
-const ScheduleComponent = () => {
+const ScheduleComponent = ({
+  days,
+  hours,
+  startDate,
+  formatDate,
+  formatDay,
+  updateHover,
+  toggleAvailability,
+  selectedCells,
+  setSelectedCells,
+  availabilities,
+  myName,
+}) => {
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState(null);
-  const [selectedCells, setSelectedCells] = useState({});
+  const [cellsToUpdate, setCellsToUpdate] = useState([]);
+
   const [initialSelectionState, setInitialSelectionState] = useState(false);
 
   const getIndex = (day, hour) => {
     return { dayIndex: days.indexOf(day), hourIndex: hours.indexOf(hour) };
   };
 
-  const handleMouseUp = () => {
-    setIsDragging(false);
-    window.removeEventListener('mouseup', handleMouseUp);
-  };
-
   const handleMouseDown = (day, hour) => {
     const index = getIndex(day, hour);
-    const key = `${day}-${hour}`;
-    setInitialSelectionState(!selectedCells[key]);
-    setSelectedCells({ ...selectedCells, [key]: !selectedCells[key] });
+    const date = new Date(startDate);
+    date.setDate(startDate.getDate() + index.dayIndex);
+    const dateTimeKey = `${formatDate(date)} ${hours[index.hourIndex]}`;
+
+    const currentState = selectedCells[dateTimeKey] || false;
+    setInitialSelectionState(!currentState);
+
+    // Toggle the availability for this cell
+    toggleAvailability(dateTimeKey);
+
+    // Update the selected state for this cell
+    setSelectedCells({ ...selectedCells, [dateTimeKey]: !currentState });
     setDragStart(index);
     setIsDragging(true);
     window.addEventListener('mouseup', handleMouseUp);
+
+    console.log('Start Drag:', dragStart);
   };
 
   const handleMouseEnter = (day, hour) => {
     if (isDragging && dragStart) {
       const currentEnd = getIndex(day, hour);
       selectCells(dragStart, currentEnd);
+    } else {
+      updateHover(day, hour);
     }
+  };
+
+  // Add a handleMouseLeave function
+  const handleMouseLeave = () => {
+    updateHover(null, null);
+    console.log('Available Cells:', availabilities);
+  };
+
+  const handleMouseUp = () => {
+    // Update availability for all cells in cellsToUpdate
+    cellsToUpdate.forEach((dateTimeKey) => {
+      toggleAvailability(dateTimeKey);
+    });
+
+    // Only reset dragging states, not the selected cells
+    setIsDragging(false);
+    setDragStart(null);
+    setCellsToUpdate([]);
+    console.log('Selected Cells:', selectedCells);
+    window.removeEventListener('mouseup', handleMouseUp);
   };
 
   const selectCells = (start, end) => {
     const newSelectedCells = { ...selectedCells };
-    for (
-      let d = Math.min(start.dayIndex, end.dayIndex);
-      d <= Math.max(start.dayIndex, end.dayIndex);
-      d++
-    ) {
-      for (
-        let h = Math.min(start.hourIndex, end.hourIndex);
-        h <= Math.max(start.hourIndex, end.hourIndex);
-        h++
-      ) {
-        const key = `${days[d]}-${hours[h]}`;
-        newSelectedCells[key] = initialSelectionState;
+    const newCellsToUpdate = [];
+
+    const dayStart = Math.min(start.dayIndex, end.dayIndex);
+    const dayEnd = Math.max(start.dayIndex, end.dayIndex);
+    const hourStart = Math.min(start.hourIndex, end.hourIndex);
+    const hourEnd = Math.max(start.hourIndex, end.hourIndex);
+
+    for (let d = dayStart; d <= dayEnd; d++) {
+      for (let h = hourStart; h <= hourEnd; h++) {
+        const date = new Date(startDate);
+        date.setDate(startDate.getDate() + d);
+        const dateTimeKey = `${formatDate(date)} ${hours[h]}`;
+
+        newSelectedCells[dateTimeKey] = initialSelectionState;
+
+        // Add cell to update list
+        newCellsToUpdate.push(dateTimeKey);
       }
     }
+
     setSelectedCells(newSelectedCells);
+    setCellsToUpdate(newCellsToUpdate);
   };
 
   // Create an array of formatted dates and days for the top row
@@ -95,11 +109,50 @@ const ScheduleComponent = () => {
     };
   });
 
+  const lerp = (a, b, u) => {
+    return (1 - u) * a + u * b;
+  };
+
+  const getCellBackgroundColor = (dateTimeKey) => {
+    const cellAvailability = availabilities[dateTimeKey] || [];
+    const othersCount = cellAvailability.filter(
+      (person) => person.name !== myName && person.isAvailable,
+    ).length;
+
+    if (selectedCells[dateTimeKey]) {
+      // Interpolate between light green and dark green
+      const totalOthers = cellAvailability.length;
+      const intensity = totalOthers > 0 ? othersCount / totalOthers : 0;
+
+      // Dark Green (00FF5E) to Light Green (8EFFB8)
+      const endGreen = [35, 152, 58]; // RGB for #2D6A4F
+      const startGreen = [163, 255, 206]; // RGB for #95D5B2
+
+      const r = Math.floor(lerp(startGreen[0], endGreen[0], intensity));
+      const g = Math.floor(lerp(startGreen[1], endGreen[1], intensity));
+      const b = Math.floor(lerp(startGreen[2], endGreen[2], intensity));
+
+      return `rgb(${r},${g},${b})`;
+    } else {
+      // Grey gradient logic
+      if (othersCount > 0) {
+        const greyIntensity = Math.min(
+          othersCount / cellAvailability.length,
+          1,
+        );
+        const greyValue = Math.floor(255 - greyIntensity * 100).toString(16);
+        return `#${greyValue}${greyValue}${greyValue}`;
+      } else {
+        return 'white'; // White if no one else is available
+      }
+    }
+  };
+
   return (
     <div className="flex">
       <div className="flex flex-col text-sm pr-2">
         {/* Empty div to align the first timestamp with the first cell */}
-        <div style={{ height: '15px' }}></div>
+        <div style={{ height: '24px' }}></div>
         {hours
           .filter((_, index) => index % 2 === 0)
           .map((hour, index) => (
@@ -126,23 +179,29 @@ const ScheduleComponent = () => {
         </div>
         <div className="grid grid-cols-7 gap-1">
           {days.map((day, dayIndex) => (
-            <div key={dayIndex} className="flex flex-col space-y-1">
-              {hours.map((hour, hourIndex) => (
-                <div
-                  key={hourIndex}
-                  className={`flex justify-center items-center border border-gray-300`}
-                  style={{
-                    width: '80px',
-                    height: '30px',
-                    backgroundColor: selectedCells[`${day}-${hour}`]
-                      ? '#10B981'
-                      : 'white',
-                  }}
-                  onMouseDown={() => handleMouseDown(day, hour)}
-                  onMouseEnter={() => handleMouseEnter(day, hour)}
-                  onMouseUp={handleMouseUp}
-                ></div>
-              ))}
+            <div key={dayIndex} className="flex flex-col">
+              {hours.map((hour, hourIndex) => {
+                const date = new Date(startDate);
+                date.setDate(startDate.getDate() + dayIndex);
+                const dateTimeKey = `${formatDate(date)} ${hour}`;
+                const cellBackgroundColor = getCellBackgroundColor(dateTimeKey);
+
+                return (
+                  <div
+                    key={hourIndex}
+                    className="flex justify-center items-center border border-gray-300"
+                    style={{
+                      width: '80px',
+                      height: '30px',
+                      backgroundColor: cellBackgroundColor,
+                    }}
+                    onMouseDown={() => handleMouseDown(day, hour)}
+                    onMouseEnter={() => handleMouseEnter(day, hour)}
+                    onMouseLeave={handleMouseLeave}
+                    onMouseUp={handleMouseUp}
+                  ></div>
+                );
+              })}
             </div>
           ))}
         </div>

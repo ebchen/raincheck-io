@@ -10,18 +10,20 @@ const AvailabilityComponent = () => {
   };
 
   const handleSyncCalendar = () => {
-    // Handle syncing with Google Calendar 
+    // Handle syncing with Google Calendar
   };
 
   const handleAddAvailability = () => {
-    // Handle adding availability 
+    // Handle adding availability
     setShowInput(false);
   };
 
   return (
-    <div className="w-full lg:w-1/3 bg-white rounded-md shadow-md items-center justify-center py-8 px-8 mx-28">
-      <h2 className="text-2xl font-bold mb-0 p-3 text-center">Add your Availability</h2>
-      
+    <div className="w-full lg:w-1/3 bg-white rounded-md shadow-md items-center justify-center py-8 px-8">
+      <h2 className="text-2xl font-bold mb-0 p-3 text-center">
+        Add your Availability
+      </h2>
+
       <div className="flex flex-col items-center">
         {showInput ? (
           <input

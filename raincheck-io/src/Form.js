@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const Form = ({setMode}) => {
+const Form = ({ setMode }) => {
   // State to store the event name
   const [eventName, setEventName] = useState('');
   const [calendarType, setCalendarType] = useState('specificDates');
@@ -8,6 +8,7 @@ const Form = ({setMode}) => {
   const [endTime, setEndTime] = useState('05:00 PM');
   const [timezone, setTimezone] = useState('EST');
   const [wantNotifications, setWantNotifications] = useState(false);
+  const [useHeaders, setUseHeaders] = useState(true); // toggle false or true
   const [useHeaders, setUseHeaders] = useState(false);
   const [notificationEmail, setNotificationEmail] = useState(''); // New state for email
 
@@ -18,7 +19,7 @@ const Form = ({setMode}) => {
 
   const handleCalendarTypeChange = (selectedType) => {
     setCalendarType(selectedType);
-    setMode(selectedType)
+    setMode(selectedType);
   };
 
   const handleStartTimeChange = (e) => {
@@ -57,31 +58,54 @@ const Form = ({setMode}) => {
 
   // List of timezones
   const timezones = [
-    'UTC',
-    'EST',
-    'PST',
-    'America/New_York',
-    'Europe/London',
-    'Asia/Tokyo' /* Add more as needed */,
+    'ET (Eastern Time)',
+    'UTC (Coordinated Universal Time)',
+    'GMT (Greenwich Mean Time)',
+    'CT (Central Time)',
+    'MT (Mountain Time)',
+    'PT (Pacific Time)',
+    'MST (Mountain Standard Time)',
+    'CST (Central Standard Time)',
+    'EST (Eastern Standard Time)',
+    'AST (Atlantic Standard Time)',
+    'AKT (Alaska Time)',
+    'HST (Hawaii-Aleutian Standard Time)',
+    'CET (Central European Time)',
+    'CEST (Central European Summer Time)',
+    'JST (Japan Standard Time)',
+    'CST (China Standard Time)',
+    'GST (Gulf Standard Time)',
+    'IST (Indian Standard Time)',
+    'AEST (Australian Eastern Standard Time)',
+    'AEDT (Australian Eastern Daylight Time)',
+    'ACST (Australian Central Standard Time)',
+    'ACDT (Australian Central Daylight Time)',
+    'AWST (Australian Western Standard Time)',
+    'NZST (New Zealand Standard Time)',
+    'NZDT (New Zealand Daylight Time)',
+    'NST (Newfoundland Standard Time)',
+    'NDT (Newfoundland Daylight Time)',
   ];
 
   const hours = generateHours();
 
   return (
     <div className="w-full lg:w-1/2 bg-white rounded-md shadow-md items-center justify-center py-8 px-8 mx-28">
-      <h2 className="text-3xl font-bold mb-3 p-4 text-center">Create a New Event</h2>
-      <div className='flex justify-center'>
-      <form onSubmit={handleSubmit} className=''>
-        <div className="mb-4">
-          {/* if useHeader is true, then include Event Name header */}
-          {useHeaders && (
-            <label
-              htmlFor="eventName"
-              className="block text-sm font-medium text-blue-500"
-            >
-              Event Name <span className="text-red-500">*</span>
-            </label>
-          )}
+      <h2 className="text-3xl font-bold mb-3 p-4 text-center">
+        Create a New Event
+      </h2>
+      <div className="flex justify-center">
+        <form onSubmit={handleSubmit} className="">
+          <div className="mb-4">
+            {/* if useHeader is true, then include Event Name header */}
+            {useHeaders && (
+              <label
+                htmlFor="eventName"
+                className="block text-sm font-medium text-blue-500"
+              >
+                Event Name <span className="text-red-500">*</span>
+              </label>
+            )}
 
           <input
             type="text"
@@ -209,61 +233,59 @@ const Form = ({setMode}) => {
           </select>
         </div>
 
-        <div className="">
-          <div className="flex items-center justify-start">
-            <label
-              htmlFor="wantNotifications"
-              className="text-sm text-blue-500"
-            >
-              Want notifications?
-            </label>
-
-            <input
-              type="checkbox"
-              id="wantNotifications"
-              name="wantNotifications"
-              checked={wantNotifications}
-              onChange={handleWantNotificationsChange}
-              className="form-checkbox h-4 w-4 text-blue-500 ml-4"
-            />
-          </div>
-
-          {wantNotifications && (
-            <div className="mb-4 mt-2">
-              {useHeaders && (
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-blue-500"
-                >
-                  Email Address <span className="text-red-500">*</span>
-                </label>
-              )}
+          <div className="">
+            <div className="flex items-center justify-start">
+              <label
+                htmlFor="wantNotifications"
+                className="text-sm text-blue-500"
+              >
+                Want notifications?
+              </label>
 
               <input
-                type="email"
-                id="email"
-                name="email"
-                value={notificationEmail}
-                onChange={handleNotificationEmailChange}
-                placeholder="Enter your email"
-                className="mt-1 p-2 border rounded-md placeholder-gray-500 w-full"
-                required
+                type="checkbox"
+                id="wantNotifications"
+                name="wantNotifications"
+                checked={wantNotifications}
+                onChange={handleWantNotificationsChange}
+                className="form-checkbox h-4 w-4 text-blue-500 ml-4"
               />
             </div>
-          )}
-        </div>
-        <div className='flex justify-center'>
-          <button
-            type="submit"
-            className="bg-blue-500 font-bold text-white px-20 py-2 rounded-md text-xl hover:bg-blue-700 mt-4 mb-4"
-          >
-            Create
-          </button>
-        </div>
 
-      </form>
+            {wantNotifications && (
+              <div className="mb-4 mt-2">
+                {useHeaders && (
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-medium text-blue-500"
+                  >
+                    Email Address <span className="text-red-500">*</span>
+                  </label>
+                )}
+
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={notificationEmail}
+                  onChange={handleNotificationEmailChange}
+                  placeholder="Enter your email"
+                  className="mt-1 p-2 border rounded-md placeholder-gray-500 w-full"
+                  required
+                />
+              </div>
+            )}
+          </div>
+          <div className="flex justify-center">
+            <button
+              type="submit"
+              className="bg-blue-500 font-bold text-white px-20 py-2 rounded-md text-xl hover:bg-blue-700 mt-4 mb-4"
+            >
+              Create
+            </button>
+          </div>
+        </form>
       </div>
-
     </div>
   );
 };

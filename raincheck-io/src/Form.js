@@ -8,7 +8,6 @@ const Form = ({ setMode }) => {
   const [endTime, setEndTime] = useState('05:00 PM');
   const [timezone, setTimezone] = useState('EST');
   const [wantNotifications, setWantNotifications] = useState(false);
-  const [useHeaders, setUseHeaders] = useState(true); // toggle false or true
   const [useHeaders, setUseHeaders] = useState(false);
   const [notificationEmail, setNotificationEmail] = useState(''); // New state for email
 

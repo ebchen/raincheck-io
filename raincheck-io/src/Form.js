@@ -6,9 +6,10 @@ const Form = ({ setMode }) => {
   const [calendarType, setCalendarType] = useState('specificDates');
   const [startTime, setStartTime] = useState('09:00 AM');
   const [endTime, setEndTime] = useState('05:00 PM');
-  const [timezone, setTimezone] = useState('EST');
+  const [error, setError] = useState(false)
+  const [timezone, setTimezone] = useState('EST (Eastern Standard Time)');
   const [wantNotifications, setWantNotifications] = useState(false);
-  const [useHeaders, setUseHeaders] = useState(true); // toggle false or true
+  const [useHeaders, setUseHeaders] = useState(false);
   const [notificationEmail, setNotificationEmail] = useState(''); // New state for email
 
   // Function to handle changes in the event name input
@@ -22,11 +23,21 @@ const Form = ({ setMode }) => {
   };
 
   const handleStartTimeChange = (e) => {
-    setStartTime(e.target.value);
+    const newStartTime = e.target.value;
+    setStartTime(newStartTime);
+    setError(
+      !((newStartTime.includes("AM") && endTime.includes("AM")) || 
+      newStartTime < endTime)
+    )
   };
 
   const handleEndTimeChange = (e) => {
-    setEndTime(e.target.value);
+    const newEndTime = e.target.value;
+    setEndTime(newEndTime);
+    setError(
+      !((newEndTime.includes("PM") && startTime.includes("AM")) || 
+      startTime < newEndTime)
+    )
   };
 
   const handleTimezoneChange = (e) => {
@@ -57,34 +68,38 @@ const Form = ({ setMode }) => {
 
   // List of timezones
   const timezones = [
+    'HST (Hawaii-Aleutian Standard Time)',
+    'AKT (Alaska Time)',
+    'PST (Pacific Time)',
+    'MST (Mountain Standard Time)',
+    'PT (Pacific Time)',
+    'MT (Mountain Time)',
+    'CST (Central Standard Time)',
+    'CT (Central Time)',
+    'EST (Eastern Standard Time)',
     'ET (Eastern Time)',
+    'AST (Atlantic Standard Time)',
+    'NST (Newfoundland Standard Time)',
     'UTC (Coordinated Universal Time)',
     'GMT (Greenwich Mean Time)',
-    'CT (Central Time)',
-    'MT (Mountain Time)',
-    'PT (Pacific Time)',
-    'MST (Mountain Standard Time)',
-    'CST (Central Standard Time)',
-    'EST (Eastern Standard Time)',
-    'AST (Atlantic Standard Time)',
-    'AKT (Alaska Time)',
-    'HST (Hawaii-Aleutian Standard Time)',
     'CET (Central European Time)',
     'CEST (Central European Summer Time)',
-    'JST (Japan Standard Time)',
-    'CST (China Standard Time)',
+    'EET (Eastern European Time)',
+    'EEST (Eastern European Summer Time)',
     'GST (Gulf Standard Time)',
     'IST (Indian Standard Time)',
-    'AEST (Australian Eastern Standard Time)',
-    'AEDT (Australian Eastern Daylight Time)',
+    'GST (Gulf Standard Time)',
+    'CST (China Standard Time)',
+    'JST (Japan Standard Time)',
     'ACST (Australian Central Standard Time)',
+    'AEST (Australian Eastern Standard Time)',
     'ACDT (Australian Central Daylight Time)',
-    'AWST (Australian Western Standard Time)',
+    'AEDT (Australian Eastern Daylight Time)',
     'NZST (New Zealand Standard Time)',
     'NZDT (New Zealand Daylight Time)',
-    'NST (Newfoundland Standard Time)',
-    'NDT (Newfoundland Daylight Time)',
+    'NDT (Newfoundland Daylight Time)'
   ];
+  
 
   const hours = generateHours();
 
@@ -106,133 +121,134 @@ const Form = ({ setMode }) => {
               </label>
             )}
 
-            <input
-              type="text"
-              id="eventName"
-              name="eventName"
-              value={eventName}
-              onChange={handleEventNameChange}
-              placeholder="Enter an event name"
-              className="mt-1 p-2 border rounded-md ml-2 placeholder-gray-500 w-full"
-              required
-            />
-          </div>
+          <input
+            type="text"
+            id="eventName"
+            name="eventName"
+            value={eventName}
+            onChange={handleEventNameChange}
+            placeholder="Enter an event name"
+            className="mt-1 p-2 border rounded-md placeholder-gray-500 w-full"
+            required
+          />
+        </div>
 
-          {useHeaders && (
-            <label className="block text-sm font-medium text-blue-500 mb-2">
-              Calendar Type <span className="text-red-500">*</span>
-            </label>
-          )}
+        {useHeaders && (
+          <label className="block text-sm font-medium text-blue-500 mb-2">
+            Calendar Type <span className="text-red-500">*</span>
+          </label>
+        )}
 
-          <div className="mb-4 flex justify-start">
-            <div className="flex">
-              <button
-                type="button"
-                onClick={() => handleCalendarTypeChange('specificDates')}
-                className={`text-white px-4 py-2 rounded-l-md ${
-                  calendarType === 'specificDates'
-                    ? 'bg-blue-700'
-                    : 'bg-slate-400'
-                }`}
-              >
-                Specific Dates
-              </button>
-              <button
-                type="button"
-                onClick={() => handleCalendarTypeChange('daysOfWeek')}
-                className={`text-white px-4 py-2 rounded-r-md ${
-                  calendarType === 'daysOfWeek' ? 'bg-blue-700' : 'bg-slate-400'
-                }`}
-              >
-                Days of the Week
-              </button>
-            </div>
-          </div>
-          {useHeaders && (
-            <label className="block text-sm font-medium text-blue-500">
-              Time Range <span className="text-red-500">*</span>
-            </label>
-          )}
-
-          <div className="mb-4 flex justify-start">
-            <select
-              id="startTime"
-              name="startTime"
-              value={startTime}
-              onChange={handleStartTimeChange}
-              className="mt-1 p-2 border rounded-md"
-              required
+        <div className="mb-4 flex">
+            <button
+              type="button"
+              onClick={() => handleCalendarTypeChange('specificDates')}
+              className={`text-white px-3 py-2 rounded-l-md w-full ${
+                calendarType === 'specificDates' ? 'bg-blue-700' : 'bg-slate-400'
+              }`}
             >
-              {hours.map((hour) => (
-                <option key={`${hour}:00-AM`} value={`${hour}:00 AM`}>
-                  {`${hour}:00 AM`}
-                </option>
-              ))}
-              <option key={`12:00-PM`} value={`12:00 PM`}>
-                12:00 PM
-              </option>
-              {hours.slice(1).map((hour) => (
-                <option key={`${hour}:00-PM`} value={`${hour}:00 PM`}>
-                  {`${hour}:00 PM`}
-                </option>
-              ))}
-              <option key={`12:00-PM`} value={`12:00 PM`}>
-                12:00 AM
-              </option>
-            </select>
-
-            <label className="block text-sm font-medium text-gray-600 ml-2 mt-3">
-              to
-            </label>
-            <select
-              id="endTime"
-              name="endTime"
-              value={endTime}
-              onChange={handleEndTimeChange}
-              className="mt-1 p-2 border rounded-md ml-2"
-              required
+              Specific Dates
+            </button>
+            <button
+              type="button"
+              onClick={() => handleCalendarTypeChange('daysOfWeek')}
+              className={`text-white px-3 py-2 rounded-r-md w-full ${
+                calendarType === 'daysOfWeek' ? 'bg-blue-700' : 'bg-slate-400'
+              }`}
             >
-              {hours.map((hour) => (
-                <option key={`${hour}:00-AM`} value={`${hour}:00 AM`}>
-                  {`${hour}:00 AM`}
-                </option>
-              ))}
-              <option key={`12:00-PM`} value={`12:00 PM`}>
-                12:00 PM
-              </option>
-              {hours.slice(1).map((hour) => (
-                <option key={`${hour}:00-PM`} value={`${hour}:00 PM`}>
-                  {`${hour}:00 PM`}
-                </option>
-              ))}
-              <option key={`12:00-PM`} value={`12:00 PM`}>
-                12:00 AM
-              </option>
-            </select>
-          </div>
+              Days of the Week
+            </button>
+        </div>
+        {useHeaders && (
+          <label className="block text-sm font-medium text-blue-500">
+            Time Range <span className="text-red-500">*</span>
+          </label>
+        )}
 
-          {useHeaders && (
-            <label className="block text-sm font-medium text-blue-500 ml-2 mt-3">
-              Timezone <span className="text-red-500">*</span>
-            </label>
-          )}
+        <div className="flex justify-start">
+          <select
+            id="startTime"
+            name="startTime"
+            value={startTime}
+            onChange={handleStartTimeChange}
+            className="mt-1 p-2 border rounded-md w-full"
+            required
+          >
+            {hours.map((hour) => (
+              <option key={`${hour}:00-AM`} value={`${hour}:00 AM`}>
+                {`${hour}:00 AM`}
+              </option>
+            ))}
+            <option key={`12:00-PM`} value={`12:00 PM`}>
+              12:00 PM
+            </option>
+            {hours.slice(1).map((hour) => (
+              <option key={`${hour}:00-PM`} value={`${hour}:00 PM`}>
+                {`${hour}:00 PM`}
+              </option>
+            ))}
+            <option key={`12:00-PM`} value={`12:00 PM`}>
+              12:00 AM
+            </option>
+          </select>
 
-          <div className="mb-4 flex justify-start">
-            <select
-              id="timezone"
-              name="timezone"
-              value={timezone}
-              onChange={handleTimezoneChange}
-              className="mt-1 p-2 border rounded-md"
-              required
-            >
-              {timezones.map((tz) => (
-                <option key={tz} value={tz}>
-                  {tz}
-                </option>
-              ))}
-            </select>
-          </div>
+          <label className="block text-sm font-medium text-gray-600 ml-2 mt-3">
+            to
+          </label>
+          <select
+            id="endTime"
+            name="endTime"
+            value={endTime}
+            onChange={handleEndTimeChange}
+            className="mt-1 p-2 border rounded-md ml-2 w-full"
+            required
+          >
+            {hours.map((hour) => (
+              <option key={`${hour}:00-AM`} value={`${hour}:00 AM`}>
+                {`${hour}:00 AM`}
+              </option>
+            ))}
+            <option key={`12:00-PM`} value={`12:00 PM`}>
+              12:00 PM
+            </option>
+            {hours.slice(1).map((hour) => (
+              <option key={`${hour}:00-PM`} value={`${hour}:00 PM`}>
+                {`${hour}:00 PM`}
+              </option>
+            ))}
+            <option key={`12:00-PM`} value={`12:00 PM`}>
+              12:00 AM
+            </option>
+          </select>
+        </div>
+        {error && (
+          <label className="block text-sm font-semibold text-rose-500 ml-1 mt-1">
+            *Start time must be before end time
+          </label>
+        )}
+
+        {useHeaders && (
+          <label className="block text-sm font-medium text-blue-500 mt-3">
+            Timezone <span className="text-red-500">*</span>
+          </label>
+        )}
+
+        <div className="my-4 flex justify-start">
+          <select
+            id="timezone"
+            name="timezone"
+            value={timezone}
+            onChange={handleTimezoneChange}
+            className="mt-1 p-2 border rounded-md w-full"
+            required
+          >
+            {timezones.map((tz) => (
+              <option key={tz} value={tz}>
+                {tz}
+              </option>
+            ))}
+          </select>
+        </div>
 
           <div className="">
             <div className="flex items-center justify-start">

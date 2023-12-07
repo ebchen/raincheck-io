@@ -57,7 +57,7 @@ const DOW = () => {
                           .fill()
                           .map((_, dayIndex) => {
                             const baseClass =
-                              'text-base font-medium flex items-center justify-center w-8 h-8';
+                              'text-base font-medium flex items-center justify-center w-8 h-8 hover:bg-blue-500 hover:text-white';
                             const dayNumber = weekIndex * 7 + dayIndex;
                             const isSelected =
                               selectedDates.includes(dayNumber);

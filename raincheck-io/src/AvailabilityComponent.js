@@ -19,7 +19,7 @@ const AvailabilityComponent = () => {
   };
 
   return (
-    <div className="w-full lg:w-1/3 bg-white rounded-md shadow-md items-center justify-center py-8 px-8">
+    <div className="flex flex-col flex-grow h-full w-full lg:w-1/3 bg-white rounded-md shadow-md items-center justify-center pt-8 pb-10 px-8 ">
       <h2 className="text-2xl font-bold mb-0 p-3 text-center">
         Add your Availability
       </h2>

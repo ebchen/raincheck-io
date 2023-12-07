@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const Cal = () => {
+const Cal = (calendarMode) => {
   const months = {
     January: 31,
     February: 29,
@@ -32,11 +32,11 @@ const Cal = () => {
   ];
 
   const [month, setMonth] = useState('January');
-  const [year, setYear] = useState(2024)
+  const [year, setYear] = useState(2024);
   const [dates, setDates] = useState(31);
   const [selectedDates, setSelectedDates] = useState([]);
-  const [startDOW, setStartDOW] = useState("Mo");
-  const dOW = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+  const [startDOW, setStartDOW] = useState('Mo');
+  const dOW = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
 
   const updateStartDOW = (newMonth) => {
     const dayIndex = dOW.indexOf(startDOW);
@@ -44,38 +44,42 @@ const Cal = () => {
     const newStartDOW = dOW[(lastDayIndex + 1) % 7];
     setStartDOW(newStartDOW);
   };
-  
+
   // 31st is a Sunday, so then what is the first?
 
   const updateStartDOWForDecrement = (newMonth) => {
     const dayIndex = dOW.indexOf(startDOW);
     const newLastDayIndex = (dayIndex - 1 + 7) % 7; // Go one day back for last day of new month
-    const newFirstDayIndex = (newLastDayIndex - ((months[newMonth] - 1) % 7) + 7) % 7; // Calculate first day of new month
-    console.log(newFirstDayIndex)
-    console.log(dOW[newFirstDayIndex ])
-    setStartDOW(dOW[newFirstDayIndex ]);
+    const newFirstDayIndex =
+      (newLastDayIndex - ((months[newMonth] - 1) % 7) + 7) % 7; // Calculate first day of new month
+    console.log(newFirstDayIndex);
+    console.log(dOW[newFirstDayIndex]);
+    setStartDOW(dOW[newFirstDayIndex]);
   };
-  
+
   const decrementMonth = () => {
-    const newMonthIndex = (monthsOrder.length + monthsOrder.indexOf(month) - 1) % monthsOrder.length;
+    const newMonthIndex =
+      (monthsOrder.length + monthsOrder.indexOf(month) - 1) %
+      monthsOrder.length;
     const newMonth = monthsOrder[newMonthIndex];
-    if (newMonth === "December") {
-      setYear(year - 1)
+    if (newMonth === 'December') {
+      setYear(year - 1);
     }
     setMonth(newMonth);
     setDates(months[newMonth]);
     updateStartDOWForDecrement(newMonth);
   };
-  
+
   const incrementMonth = () => {
-    const newMonth = monthsOrder[(monthsOrder.indexOf(month) + 1) % monthsOrder.length];
-    if (newMonth === "January") {
-      setYear(year + 1)
+    const newMonth =
+      monthsOrder[(monthsOrder.indexOf(month) + 1) % monthsOrder.length];
+    if (newMonth === 'January') {
+      setYear(year + 1);
     }
     setMonth(newMonth);
     setDates(months[newMonth]);
     updateStartDOW(newMonth);
-  };  
+  };
 
   const daysArray = Array.from({ length: dates }, (_, i) => i + 1);
 
@@ -147,18 +151,18 @@ const Cal = () => {
             <table class="w-full">
               <thead>
                 <tr>
-                {dOW.map((_, index) => {
-                  const dayIndex = (dOW.indexOf(startDOW) + index) % 7;
-                  return (
-                    <th key={dOW[dayIndex]}>
-                      <div class="w-full flex justify-center">
-                        <p class="text-base font-medium text-center text-gray-800 dark:text-gray-100">
-                          {dOW[dayIndex]}
-                        </p>
-                      </div>
-                    </th>
-                  );
-                })}
+                  {dOW.map((_, index) => {
+                    const dayIndex = (dOW.indexOf(startDOW) + index) % 7;
+                    return (
+                      <th key={dOW[dayIndex]}>
+                        <div class="w-full flex justify-center">
+                          <p class="text-base font-medium text-center text-gray-800 dark:text-gray-100">
+                            {dOW[dayIndex]}
+                          </p>
+                        </div>
+                      </th>
+                    );
+                  })}
                 </tr>
               </thead>
               <tbody>

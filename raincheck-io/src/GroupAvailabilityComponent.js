@@ -128,7 +128,7 @@ const GroupAvailabilityComponent = () => {
   }, []);
 
   return (
-    <div className="w-full lg:w-2/3 bg-white rounded-md shadow-md items-center justify-center py-8 px-8 ">
+    <div className="h-full w-full lg:w-2/3 bg-white rounded-md shadow-md items-center justify-center py-8 px-8 ">
       <h2 className="text-2xl font-bold mb-4 p-3 text-center">
         Group Availability
       </h2>

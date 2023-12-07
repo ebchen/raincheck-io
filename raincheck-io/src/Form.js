@@ -6,7 +6,8 @@ const Form = ({ setMode }) => {
   const [calendarType, setCalendarType] = useState('specificDates');
   const [startTime, setStartTime] = useState('09:00 AM');
   const [endTime, setEndTime] = useState('05:00 PM');
-  const [timezone, setTimezone] = useState('EST');
+  const [error, setError] = useState(false)
+  const [timezone, setTimezone] = useState('EST (Eastern Standard Time)');
   const [wantNotifications, setWantNotifications] = useState(false);
   const [useHeaders, setUseHeaders] = useState(false);
   const [notificationEmail, setNotificationEmail] = useState(''); // New state for email
@@ -22,11 +23,21 @@ const Form = ({ setMode }) => {
   };
 
   const handleStartTimeChange = (e) => {
-    setStartTime(e.target.value);
+    const newStartTime = e.target.value;
+    setStartTime(newStartTime);
+    setError(
+      !((newStartTime.includes("AM") && endTime.includes("AM")) || 
+      newStartTime < endTime)
+    )
   };
 
   const handleEndTimeChange = (e) => {
-    setEndTime(e.target.value);
+    const newEndTime = e.target.value;
+    setEndTime(newEndTime);
+    setError(
+      !((newEndTime.includes("PM") && startTime.includes("AM")) || 
+      startTime < newEndTime)
+    )
   };
 
   const handleTimezoneChange = (e) => {
@@ -57,34 +68,38 @@ const Form = ({ setMode }) => {
 
   // List of timezones
   const timezones = [
+    'HST (Hawaii-Aleutian Standard Time)',
+    'AKT (Alaska Time)',
+    'PST (Pacific Time)',
+    'MST (Mountain Standard Time)',
+    'PT (Pacific Time)',
+    'MT (Mountain Time)',
+    'CST (Central Standard Time)',
+    'CT (Central Time)',
+    'EST (Eastern Standard Time)',
     'ET (Eastern Time)',
+    'AST (Atlantic Standard Time)',
+    'NST (Newfoundland Standard Time)',
     'UTC (Coordinated Universal Time)',
     'GMT (Greenwich Mean Time)',
-    'CT (Central Time)',
-    'MT (Mountain Time)',
-    'PT (Pacific Time)',
-    'MST (Mountain Standard Time)',
-    'CST (Central Standard Time)',
-    'EST (Eastern Standard Time)',
-    'AST (Atlantic Standard Time)',
-    'AKT (Alaska Time)',
-    'HST (Hawaii-Aleutian Standard Time)',
     'CET (Central European Time)',
     'CEST (Central European Summer Time)',
-    'JST (Japan Standard Time)',
-    'CST (China Standard Time)',
+    'EET (Eastern European Time)',
+    'EEST (Eastern European Summer Time)',
     'GST (Gulf Standard Time)',
     'IST (Indian Standard Time)',
-    'AEST (Australian Eastern Standard Time)',
-    'AEDT (Australian Eastern Daylight Time)',
+    'GST (Gulf Standard Time)',
+    'CST (China Standard Time)',
+    'JST (Japan Standard Time)',
     'ACST (Australian Central Standard Time)',
+    'AEST (Australian Eastern Standard Time)',
     'ACDT (Australian Central Daylight Time)',
-    'AWST (Australian Western Standard Time)',
+    'AEDT (Australian Eastern Daylight Time)',
     'NZST (New Zealand Standard Time)',
     'NZDT (New Zealand Daylight Time)',
-    'NST (Newfoundland Standard Time)',
-    'NDT (Newfoundland Daylight Time)',
+    'NDT (Newfoundland Daylight Time)'
   ];
+  
 
   const hours = generateHours();
 
@@ -124,12 +139,11 @@ const Form = ({ setMode }) => {
           </label>
         )}
 
-        <div className="mb-4 flex justify-start">
-          <div className="flex">
+        <div className="mb-4 flex">
             <button
               type="button"
               onClick={() => handleCalendarTypeChange('specificDates')}
-              className={`text-white px-4 py-2 rounded-l-md ${
+              className={`text-white px-3 py-2 rounded-l-md w-full ${
                 calendarType === 'specificDates' ? 'bg-blue-700' : 'bg-slate-400'
               }`}
             >
@@ -138,13 +152,12 @@ const Form = ({ setMode }) => {
             <button
               type="button"
               onClick={() => handleCalendarTypeChange('daysOfWeek')}
-              className={`text-white px-4 py-2 rounded-r-md ${
+              className={`text-white px-3 py-2 rounded-r-md w-full ${
                 calendarType === 'daysOfWeek' ? 'bg-blue-700' : 'bg-slate-400'
               }`}
             >
               Days of the Week
             </button>
-          </div>
         </div>
         {useHeaders && (
           <label className="block text-sm font-medium text-blue-500">
@@ -152,7 +165,7 @@ const Form = ({ setMode }) => {
           </label>
         )}
 
-        <div className="mb-4 flex justify-start">
+        <div className="flex justify-start">
           <select
             id="startTime"
             name="startTime"
@@ -208,6 +221,11 @@ const Form = ({ setMode }) => {
             </option>
           </select>
         </div>
+        {error && (
+          <label className="block text-sm font-semibold text-rose-500 ml-1 mt-1">
+            *Start time must be before end time
+          </label>
+        )}
 
         {useHeaders && (
           <label className="block text-sm font-medium text-blue-500 mt-3">
@@ -215,7 +233,7 @@ const Form = ({ setMode }) => {
           </label>
         )}
 
-        <div className="mb-4 flex justify-start">
+        <div className="my-4 flex justify-start">
           <select
             id="timezone"
             name="timezone"

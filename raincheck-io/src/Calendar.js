@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-const Cal = (calendarMode) => {
+const Cal = () => {
   const months = {
     January: 31,
-    February: 29,
+    February: 28,
     March: 31,
     April: 30,
     May: 31,
@@ -31,30 +31,42 @@ const Cal = (calendarMode) => {
     'December',
   ];
 
-  const [month, setMonth] = useState('January');
-  const [year, setYear] = useState(2024);
-  const [dates, setDates] = useState(31);
-  const [selectedDates, setSelectedDates] = useState([]);
-  const [startDOW, setStartDOW] = useState('Mo');
-  const dOW = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
+  const fixedDOW = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 
-  const updateStartDOW = (newMonth) => {
-    const dayIndex = dOW.indexOf(startDOW);
-    const lastDayIndex = (dayIndex + months[month] - 1) % 7;
-    const newStartDOW = dOW[(lastDayIndex + 1) % 7];
-    setStartDOW(newStartDOW);
+  const today = new Date();
+  const currentMonth = monthsOrder[today.getMonth()];
+  const currentYear = today.getFullYear();
+  const todayDate = today.getDate();
+
+  const [month, setMonth] = useState(currentMonth);
+  const [year, setYear] = useState(currentYear);
+  const [dates, setDates] = useState(months[currentMonth]);
+  const [selectedDates, setSelectedDates] = useState([]);
+  const [daysArray, setDaysArray] = useState([]);
+
+  const getStartDayOfMonth = (year, month) => {
+    return new Date(year, monthsOrder.indexOf(month), 1).getDay();
   };
 
-  // 31st is a Sunday, so then what is the first?
+  const calculateMonthDaysArray = (year, month) => {
+    const firstDayOfMonth = getStartDayOfMonth(year, month);
+    const daysInMonth = months[month];
+    let daysArray = Array(firstDayOfMonth).fill(null);
+    daysArray = daysArray.concat(
+      Array.from({ length: daysInMonth }, (_, i) => i + 1),
+    );
+    return daysArray;
+  };
 
-  const updateStartDOWForDecrement = (newMonth) => {
-    const dayIndex = dOW.indexOf(startDOW);
-    const newLastDayIndex = (dayIndex - 1 + 7) % 7; // Go one day back for last day of new month
-    const newFirstDayIndex =
-      (newLastDayIndex - ((months[newMonth] - 1) % 7) + 7) % 7; // Calculate first day of new month
-    console.log(newFirstDayIndex);
-    console.log(dOW[newFirstDayIndex]);
-    setStartDOW(dOW[newFirstDayIndex]);
+  useEffect(() => {
+    const newDaysArray = calculateMonthDaysArray(year, month);
+    setDaysArray(newDaysArray);
+  }, [month, year]);
+
+  const updateCalendar = (newMonth, newYear) => {
+    setMonth(newMonth);
+    setYear(newYear);
+    setDates(months[newMonth]);
   };
 
   const decrementMonth = () => {
@@ -62,26 +74,16 @@ const Cal = (calendarMode) => {
       (monthsOrder.length + monthsOrder.indexOf(month) - 1) %
       monthsOrder.length;
     const newMonth = monthsOrder[newMonthIndex];
-    if (newMonth === 'December') {
-      setYear(year - 1);
-    }
-    setMonth(newMonth);
-    setDates(months[newMonth]);
-    updateStartDOWForDecrement(newMonth);
+    const newYear = newMonth === 'December' ? year - 1 : year;
+    updateCalendar(newMonth, newYear);
   };
 
   const incrementMonth = () => {
-    const newMonth =
-      monthsOrder[(monthsOrder.indexOf(month) + 1) % monthsOrder.length];
-    if (newMonth === 'January') {
-      setYear(year + 1);
-    }
-    setMonth(newMonth);
-    setDates(months[newMonth]);
-    updateStartDOW(newMonth);
+    const newMonthIndex = (monthsOrder.indexOf(month) + 1) % monthsOrder.length;
+    const newMonth = monthsOrder[newMonthIndex];
+    const newYear = newMonth === 'January' ? year + 1 : year;
+    updateCalendar(newMonth, newYear);
   };
-
-  const daysArray = Array.from({ length: dates }, (_, i) => i + 1);
 
   const toggleSelectedDate = (day) => {
     if (selectedDates.includes(day)) {
@@ -92,21 +94,21 @@ const Cal = (calendarMode) => {
   };
 
   return (
-    <div class="min-h-screen flex items-center justify-center py-8 px-4">
-      <div class="max-w-md w-full shadow-lg rounded-lg">
-        <div class="md:p-8 p-5 dark:bg-blue-500 bg-white rounded-lg">
-          <div class="pl-4 flex items-center justify-between">
+    <div className="min-h-screen flex items-center justify-center py-8 px-4">
+      <div className="max-w-md w-full shadow-lg rounded-lg">
+        <div className="md:p-8 p-5 dark:bg-blue-500 bg-white rounded-lg">
+          <div className="pl-4 flex items-center justify-between">
             <span
-              tabindex="0"
-              class="focus:outline-none  text-base font-bold dark:text-gray-100 text-gray-800"
+              tabIndex="0"
+              className="focus:outline-none text-base font-bold dark:text-gray-100 text-white"
             >
               {month} {year}
             </span>
-            <div class="flex items-center">
+            <div className="flex items-center">
               <button
                 aria-label="calendar backward"
-                onClick={() => decrementMonth()}
-                class="focus:text-gray-400 hover:text-gray-400 text-gray-800 dark:text-gray-100"
+                onClick={decrementMonth}
+                className="hover:text-gray-400 text-white dark:text-gray-100"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -126,8 +128,8 @@ const Cal = (calendarMode) => {
               </button>
               <button
                 aria-label="calendar forward"
-                onClick={() => incrementMonth()}
-                class="focus:text-gray-400 hover:text-gray-400 ml-3 text-gray-800 dark:text-gray-100"
+                onClick={incrementMonth}
+                className="hover:text-gray-400 ml-3 text-white dark:text-gray-100"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -147,76 +149,65 @@ const Cal = (calendarMode) => {
               </button>
             </div>
           </div>
-          <div class="flex items-center justify-between pt-12 overflow-x-auto">
-            <table class="w-full">
+          <div className="flex items-center justify-between pt-12 overflow-x-auto">
+            <table className="w-full">
               <thead>
                 <tr>
-                  {dOW.map((_, index) => {
-                    const dayIndex = (dOW.indexOf(startDOW) + index) % 7;
-                    return (
-                      <th key={dOW[dayIndex]}>
-                        <div class="w-full flex justify-center">
-                          <p class="text-base font-medium text-center text-gray-800 dark:text-gray-100">
-                            {dOW[dayIndex]}
-                          </p>
-                        </div>
-                      </th>
-                    );
-                  })}
+                  {fixedDOW.map((day) => (
+                    <th key={day}>
+                      <div className="w-full flex justify-center">
+                        <p className="text-base font-medium text-center text-white dark:text-gray-100">
+                          {day}
+                        </p>
+                      </div>
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
-                {
-                  // Chunk the days into groups of 7 for each week
-                  Array(Math.ceil(daysArray.length / 7))
-                    .fill()
-                    .map((_, weekIndex) => (
-                      <tr key={weekIndex}>
-                        {Array(7)
-                          .fill()
-                          .map((_, dayIndex) => {
-                            const baseClass =
-                              'text-base font-medium flex items-center justify-center w-8 h-8 outline-dotted rounded-lg hover:bg-blue-500 hover:text-white';
-                            const dayNumber = weekIndex * 7 + dayIndex + 1;
-                            const isSelected =
-                              selectedDates.includes(dayNumber);
-                            if (dayNumber <= dates) {
-                              return (
-                                <td
-                                  key={dayIndex}
-                                  onClick={() => toggleSelectedDate(dayNumber)}
-                                >
-                                  <div className="px-2 py-2 cursor-pointer flex w-full justify-center">
-                                    {isSelected ? (
-                                      <a
-                                        role="link"
-                                        tabIndex="0"
-                                        className={`focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-700 focus:bg-blue-500 hover:bg-blue-500 text-white bg-blue-700 rounded-lg ${baseClass}`}
-                                      >
-                                        {dayNumber}
-                                      </a>
-                                    ) : (
-                                      <p
-                                        className={`text-gray-500 dark:text-gray-100 ${baseClass}`}
-                                      >
-                                        {dayNumber}
-                                      </p>
-                                    )}
-                                  </div>
-                                </td>
-                              );
-                            } else {
-                              // Empty cell if no day exists
-                              return (
-                                <td key={dayIndex}>
-                                  <div className="px-2 py-2 flex w-full justify-center"></div>
-                                </td>
-                              );
-                            }
-                          })}
-                      </tr>
-                    ))
-                }
+                {Array(6)
+                  .fill()
+                  .map((_, weekIndex) => (
+                    <tr key={weekIndex}>
+                      {Array(7)
+                        .fill()
+                        .map((_, dayIndex) => {
+                          const dayNumber = daysArray[weekIndex * 7 + dayIndex];
+                          const isToday =
+                            dayNumber === todayDate &&
+                            month === currentMonth &&
+                            year === currentYear;
+                          const isSelected = selectedDates.includes(dayNumber);
+                          const dayClass = isSelected
+                            ? 'text-white bg-blue-700 rounded-lg'
+                            : 'text-gray-500 dark:text-gray-100';
+                          const todayClass = isToday
+                            ? 'underline font-bold'
+                            : '';
+
+                          return (
+                            <td
+                              key={dayIndex}
+                              onClick={() =>
+                                dayNumber && toggleSelectedDate(dayNumber)
+                              }
+                            >
+                              <div className="px-2 py-2 cursor-pointer flex w-full justify-center">
+                                {dayNumber ? (
+                                  <p
+                                    className={`text-base font-medium flex items-center justify-center w-8 h-8 ${dayClass} ${todayClass}`}
+                                  >
+                                    {dayNumber}
+                                  </p>
+                                ) : (
+                                  <p className="text-base font-medium flex items-center justify-center w-8 h-8"></p>
+                                )}
+                              </div>
+                            </td>
+                          );
+                        })}
+                    </tr>
+                  ))}
               </tbody>
             </table>
           </div>

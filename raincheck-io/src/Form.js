@@ -232,11 +232,13 @@ const Form = ({ setCalendarMode, handleSubmit, eventName, setEventName }) => {
               </option>
             </select>
           </div>
-          {error && (
-            <label className="block text-sm font-semibold text-rose-500 ml-1 mt-1">
-              *Start time must be before end time
-            </label>
-          )}
+          <div
+            className={`h-6 ${
+              error ? 'visible' : 'invisible'
+            } text-rose-500 text-sm font-semibold ml-1 mt-1`}
+          >
+            {error && '*Start time must be before end time'}
+          </div>
 
           {useHeaders && (
             <label className="block text-sm font-medium text-blue-500 mt-3">

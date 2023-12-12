@@ -91,36 +91,32 @@ const SchedulePage = () => {
   const [calendarMode, setCalendarMode] = useState('specificDates');
   //   const [eventName, setEventName] = useState('CIS5120 Meeting');
   const [hoveredTimeSlot, setHoveredTimeSlot] = useState(null);
-  const [selectedCells, setSelectedCells] = useState({});
+  const [selectedCells, setSelectedCells] = useState(new Set());
 
-  const toggleAvailability = (dateTimeKey) => {
-    console.log('Changing availability for:', dateTimeKey);
-
-    setYourAvailabilityData((prevData) => {
-      const updatedData = { ...prevData };
-      const availabilityList = updatedData[dateTimeKey] || [];
-
-      const isMyNameListed = availabilityList.some(
-        (person) => person.name === myName,
-      );
-      if (isMyNameListed) {
-        updatedData[dateTimeKey] = availabilityList.map((person) =>
-          person.name === myName
-            ? { ...person, isAvailable: !person.isAvailable }
-            : person,
-        );
+  const toggleAvailability = (timeSlot) => {
+    const updatedAvailabilityData = { ...yourAvailabilityData };
+    if (updatedAvailabilityData[timeSlot]) {
+      if (updatedAvailabilityData[timeSlot].includes(myName)) {
+        updatedAvailabilityData[timeSlot] = updatedAvailabilityData[
+          timeSlot
+        ].filter((name) => name !== myName);
       } else {
-        updatedData[dateTimeKey].push({ name: myName, isAvailable: true });
+        updatedAvailabilityData[timeSlot].push(myName);
       }
+    } else {
+      updatedAvailabilityData[timeSlot] = [myName];
+    }
+    setYourAvailabilityData(updatedAvailabilityData);
+  };
 
-      console.log('Updated availabilityData:', updatedData);
-      return updatedData;
-    });
-
-    // setSelectedCells((prev) => ({
-    //   ...prev,
-    //   [dateTimeKey]: !prev[dateTimeKey],
-    // }));
+  const updateSelectedCells = (cell) => {
+    const newSelectedCells = new Set(selectedCells);
+    if (newSelectedCells.has(cell)) {
+      newSelectedCells.delete(cell);
+    } else {
+      newSelectedCells.add(cell);
+    }
+    setSelectedCells(newSelectedCells);
   };
 
   const updateHoveredTimeSlot = (day, hour) => {

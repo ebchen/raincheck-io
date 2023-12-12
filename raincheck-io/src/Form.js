@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 
 const Form = ({ setCalendarMode, handleSubmit, eventName, setEventName }) => {
-  // State to store the event name
-  // const [eventName, setEventName] = useState('');
   const [calendarType, setCalendarType] = useState('specificDates');
   const [startTime, setStartTime] = useState('09:00 AM');
   const [endTime, setEndTime] = useState('05:00 PM');
@@ -10,38 +8,38 @@ const Form = ({ setCalendarMode, handleSubmit, eventName, setEventName }) => {
   const [timezone, setTimezone] = useState('EST (Eastern Standard Time)');
   const [wantNotifications, setWantNotifications] = useState(false);
   const [useHeaders, setUseHeaders] = useState(false);
-  const [notificationEmail, setNotificationEmail] = useState(''); // New state for email
+  const [notificationEmail, setNotificationEmail] = useState('');
 
-  // Function to handle changes in the event name input
   const handleEventNameChange = (e) => {
     setEventName(e.target.value);
   };
 
   const handleCalendarTypeChange = (selectedType) => {
     setCalendarType(selectedType);
-    setCalendarMode(selectedType); // Update calendar mode in parent component
+    setCalendarMode(selectedType);
+  };
+
+  const convertTo24Hour = (time) => {
+    let [hours, modifier] = time.split(' ');
+    let [hh, mm] = hours.split(':');
+    if (modifier === 'PM' && hh !== '12') {
+      hh = parseInt(hh, 10) + 12;
+    } else if (modifier === 'AM' && hh === '12') {
+      hh = '00';
+    }
+    return `${hh}:${mm}`;
   };
 
   const handleStartTimeChange = (e) => {
     const newStartTime = e.target.value;
     setStartTime(newStartTime);
-    setError(
-      !(
-        (newStartTime.includes('AM') && endTime.includes('AM')) ||
-        newStartTime < endTime
-      ),
-    );
+    setError(convertTo24Hour(newStartTime) >= convertTo24Hour(endTime));
   };
 
   const handleEndTimeChange = (e) => {
     const newEndTime = e.target.value;
     setEndTime(newEndTime);
-    setError(
-      !(
-        (newEndTime.includes('PM') && startTime.includes('AM')) ||
-        startTime < newEndTime
-      ),
-    );
+    setError(convertTo24Hour(startTime) >= convertTo24Hour(newEndTime));
   };
 
   const handleTimezoneChange = (e) => {
@@ -56,25 +54,24 @@ const Form = ({ setCalendarMode, handleSubmit, eventName, setEventName }) => {
     setNotificationEmail(e.target.value);
   };
 
-  // Modify your form's submit handler
   const handleFormSubmit = (e) => {
     e.preventDefault();
     const eventData = {
       eventName,
       calendarType,
-      // Include other data you need to pass
     };
-    handleSubmit(eventData); // Pass eventData to parent component's handleSubmit
+    handleSubmit(eventData);
   };
 
-  // Function to generate an array of hours
   const generateHours = () => {
-    const hours = [];
+    const hours = ['12'];
     for (let i = 1; i <= 11; i++) {
       hours.push(i.toString().padStart(2, '0'));
     }
     return hours;
   };
+
+  const hours = generateHours();
 
   // List of timezones
   const timezones = [
@@ -82,12 +79,8 @@ const Form = ({ setCalendarMode, handleSubmit, eventName, setEventName }) => {
     'AKT (Alaska Time)',
     'PST (Pacific Time)',
     'MST (Mountain Standard Time)',
-    'PT (Pacific Time)',
-    'MT (Mountain Time)',
     'CST (Central Standard Time)',
-    'CT (Central Time)',
     'EST (Eastern Standard Time)',
-    'ET (Eastern Time)',
     'AST (Atlantic Standard Time)',
     'NST (Newfoundland Standard Time)',
     'UTC (Coordinated Universal Time)',
@@ -110,8 +103,6 @@ const Form = ({ setCalendarMode, handleSubmit, eventName, setEventName }) => {
     'NDT (Newfoundland Daylight Time)',
   ];
 
-  const hours = generateHours();
-
   return (
     <div className="w-full bg-white rounded-md shadow-md items-center justify-center py-8 px-8">
       <h2 className="text-3xl font-bold mb-3 p-4 text-center">
@@ -119,8 +110,8 @@ const Form = ({ setCalendarMode, handleSubmit, eventName, setEventName }) => {
       </h2>
       <div className="flex justify-center">
         <form onSubmit={handleFormSubmit} className="">
+          {/* Event Name Section */}
           <div className="mb-4">
-            {/* if useHeader is true, then include Event Name header */}
             {useHeaders && (
               <label
                 htmlFor="eventName"
@@ -129,7 +120,6 @@ const Form = ({ setCalendarMode, handleSubmit, eventName, setEventName }) => {
                 Event Name <span className="text-red-500">*</span>
               </label>
             )}
-
             <input
               type="text"
               id="eventName"
@@ -246,7 +236,7 @@ const Form = ({ setCalendarMode, handleSubmit, eventName, setEventName }) => {
             </label>
           )}
 
-          <div className="my-4 flex justify-start">
+          <div className="mb-4 flex justify-start">
             <select
               id="timezone"
               name="timezone"
@@ -263,49 +253,50 @@ const Form = ({ setCalendarMode, handleSubmit, eventName, setEventName }) => {
             </select>
           </div>
 
-          <div className="">
-            <div className="flex items-center justify-start">
-              <label
-                htmlFor="wantNotifications"
-                className="text-sm text-blue-500"
-              >
-                Want notifications?
-              </label>
-
-              <input
-                type="checkbox"
-                id="wantNotifications"
-                name="wantNotifications"
-                checked={wantNotifications}
-                onChange={handleWantNotificationsChange}
-                className="form-checkbox h-4 w-4 text-blue-500 ml-4"
-              />
-            </div>
-
-            {wantNotifications && (
-              <div className="mb-4 mt-2">
-                {useHeaders && (
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-medium text-blue-500"
-                  >
-                    Email Address <span className="text-red-500">*</span>
-                  </label>
-                )}
-
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={notificationEmail}
-                  onChange={handleNotificationEmailChange}
-                  placeholder="Enter your email"
-                  className="mt-1 p-2 border rounded-md placeholder-gray-500 w-full"
-                  required
-                />
-              </div>
-            )}
+          <div className="flex items-center justify-start">
+            <label
+              htmlFor="wantNotifications"
+              className="text-sm text-blue-500 font-bold ml-2"
+            >
+              Want notifications?
+            </label>
+            <input
+              type="checkbox"
+              id="wantNotifications"
+              name="wantNotifications"
+              checked={wantNotifications}
+              onChange={handleWantNotificationsChange}
+              className="form-checkbox h-4 w-4 text-blue-500 ml-4"
+            />
           </div>
+
+          {/* Email Input Field - Transparent When Checkbox Not Checked */}
+          <div className="mb-4 mt-2">
+            {useHeaders && (
+              <label
+                htmlFor="email"
+                className={`block text-sm font-medium text-blue-500 ${
+                  wantNotifications ? '' : 'invisible'
+                }`}
+              >
+                Email Address <span className="text-red-500">*</span>
+              </label>
+            )}
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={notificationEmail}
+              onChange={handleNotificationEmailChange}
+              placeholder="Enter your email"
+              className={`mt-1 p-2 border rounded-md placeholder-gray-500 w-full ${
+                wantNotifications ? '' : 'opacity-0 pointer-events-none'
+              }`}
+              required={wantNotifications}
+            />
+          </div>
+
+          {/* Submit Button */}
           <div className="flex justify-center">
             <button
               type="submit"

@@ -36,7 +36,10 @@ const ScheduleComponent = ({
     toggleAvailability(dateTimeKey);
 
     // Update the selected state for this cell
-    setSelectedCells({ ...selectedCells, [dateTimeKey]: !currentState });
+    setSelectedCells((prevSelectedCells) => ({
+      ...prevSelectedCells,
+      [dateTimeKey]: !currentState,
+    }));
     setDragStart(index);
     setIsDragging(true);
     window.addEventListener('mouseup', handleMouseUp);
@@ -69,7 +72,6 @@ const ScheduleComponent = ({
     setIsDragging(false);
     setDragStart(null);
     setCellsToUpdate([]);
-    console.log('Selected Cells:', selectedCells);
     window.removeEventListener('mouseup', handleMouseUp);
   };
 

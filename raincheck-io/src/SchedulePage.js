@@ -11,17 +11,20 @@ import StatusComponent from './StatusComponent';
 
 const SchedulePage = () => {
   const location = useLocation();
-  const { eventName, startTime, endTime } = location.state || {
-    eventName: 'Default Event',
-    startTime: '9:00 AM',
-    endTime: '5:00 PM',
-  };
-
-  const selectedCalendarDates = [
-    [2023, 12, 18],
-    [2023, 12, 19],
-    [2023, 12, 20],
-  ];
+  const { eventName, startTime, endTime, selectedCalendarDates } =
+    location.state || {
+      eventName: 'Default Event',
+      startTime: '9:00 AM',
+      endTime: '5:00 PM',
+      selectedCalendarDates: [
+        [2023, 12, 18],
+        [2023, 12, 19],
+        [2023, 12, 20],
+        [2023, 12, 21],
+        [2023, 12, 22],
+        [2023, 12, 23],
+      ],
+    };
 
   const [myName, setMyName] = useState('Cheric');
 

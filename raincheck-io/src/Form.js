@@ -98,16 +98,11 @@ const Form = ({
     'EEST (Eastern European Summer Time)',
     'GST (Gulf Standard Time)',
     'IST (Indian Standard Time)',
-    'GST (Gulf Standard Time)',
     'CST (China Standard Time)',
     'JST (Japan Standard Time)',
     'ACST (Australian Central Standard Time)',
     'AEST (Australian Eastern Standard Time)',
-    'ACDT (Australian Central Daylight Time)',
-    'AEDT (Australian Eastern Daylight Time)',
     'NZST (New Zealand Standard Time)',
-    'NZDT (New Zealand Daylight Time)',
-    'NDT (Newfoundland Daylight Time)',
   ];
 
   return (

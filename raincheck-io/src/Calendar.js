@@ -84,15 +84,39 @@ const Cal = ({ selectedCalendarDates, setSelectedCalendarDates }) => {
     updateCalendar(newMonth, newYear);
   };
 
-  const toggleSelectedDate = (day) => {
-    if (selectedCalendarDates.includes(day)) {
+  const toggleSelectedDate = (dayNumber) => {
+    const dateArray = convertDayToDateArray(
+      dayNumber,
+      monthsOrder.indexOf(month),
+      year,
+    );
+
+    if (isDateSelected(dateArray)) {
       setSelectedCalendarDates((prevDates) =>
-        prevDates.filter((date) => date !== day),
+        prevDates.filter(
+          (date) =>
+            date[0] !== dateArray[0] ||
+            date[1] !== dateArray[1] ||
+            date[2] !== dateArray[2],
+        ),
       );
     } else {
-      setSelectedCalendarDates((prevDates) => [...prevDates, day]);
+      setSelectedCalendarDates((prevDates) => [...prevDates, dateArray]);
     }
-    console.log('Selected Dates: ', selectedCalendarDates);
+    console.log('Selected cal:', selectedCalendarDates);
+  };
+
+  const convertDayToDateArray = (dayNumber, monthIndex, year) => {
+    return [year, monthIndex + 1, dayNumber]; // monthIndex + 1 because month in Date object is 0-indexed
+  };
+
+  const isDateSelected = (dateArray) => {
+    return selectedCalendarDates.some(
+      (selectedDate) =>
+        selectedDate[0] === dateArray[0] &&
+        selectedDate[1] === dateArray[1] &&
+        selectedDate[2] === dateArray[2],
+    );
   };
 
   return (
@@ -175,12 +199,17 @@ const Cal = ({ selectedCalendarDates, setSelectedCalendarDates }) => {
                         .fill()
                         .map((_, dayIndex) => {
                           const dayNumber = daysArray[weekIndex * 7 + dayIndex];
+                          const dateArray = convertDayToDateArray(
+                            dayNumber,
+                            monthsOrder.indexOf(month),
+                            year,
+                          );
+                          const isSelected = isDateSelected(dateArray);
                           const isToday =
                             dayNumber === todayDate &&
                             month === currentMonth &&
                             year === currentYear;
-                          const isSelected =
-                            selectedCalendarDates.includes(dayNumber);
+
                           const dayClass = isSelected
                             ? 'text-white bg-blue-700 rounded-lg'
                             : 'text-gray-500 dark:text-gray-100';

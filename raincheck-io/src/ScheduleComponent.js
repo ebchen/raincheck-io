@@ -122,21 +122,21 @@ const ScheduleComponent = ({
     ).length;
 
     if (selectedCells[dateTimeKey]) {
-      // Interpolate between light green and dark green
       const totalOthers = cellAvailability.length;
       const intensity = totalOthers > 0 ? othersCount / totalOthers : 0;
 
-      // Dark Green (00FF5E) to Light Green (8EFFB8)
-      const endGreen = [35, 152, 58]; // RGB for #2D6A4F
-      const startGreen = [163, 255, 206]; // RGB for #95D5B2
+      // HSL values
+      const hue = 142;
+      const saturation = 70;
+      const startLightness = 90;
+      const endLightness = 15;
 
-      const r = Math.floor(lerp(startGreen[0], endGreen[0], intensity));
-      const g = Math.floor(lerp(startGreen[1], endGreen[1], intensity));
-      const b = Math.floor(lerp(startGreen[2], endGreen[2], intensity));
+      const lightness = Math.floor(
+        lerp(startLightness, endLightness, intensity),
+      );
 
-      return `rgb(${r},${g},${b})`;
+      return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
     } else {
-      // Grey gradient logic
       if (othersCount > 0) {
         const greyIntensity = Math.min(
           othersCount / cellAvailability.length,
@@ -145,20 +145,19 @@ const ScheduleComponent = ({
         const greyValue = Math.floor(255 - greyIntensity * 100).toString(16);
         return `#${greyValue}${greyValue}${greyValue}`;
       } else {
-        return 'white'; // White if no one else is available
+        return 'white';
       }
     }
   };
 
   return (
-    <div className="flex">
+    <div className="flex shadow-lg rounded-md p-4 bg-white">
       <div className="flex flex-col text-sm pr-2">
         {/* Empty div to align the first timestamp with the first cell */}
         <div style={{ height: '24px' }}></div>
         {hours
           .filter((_, index) => index % 2 === 0)
           .map((hour, index) => (
-            // Adjust top margin to create more spacing
             <div
               key={index}
               style={{ height: '60px' }}
@@ -183,6 +182,11 @@ const ScheduleComponent = ({
           {days.map((day, dayIndex) => (
             <div key={dayIndex} className="flex flex-col">
               {hours.map((hour, hourIndex) => {
+                if (hourIndex === hours.length - 1) {
+                  // Skip rendering for the last 30-minute block
+                  return null;
+                }
+
                 const date = new Date(startDate);
                 date.setDate(startDate.getDate() + dayIndex);
                 const dateTimeKey = `${formatDate(date)} ${hour}`;

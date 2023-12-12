@@ -5,10 +5,12 @@ import SchedulePage from './SchedulePage'; // Your schedule page component
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<FormPage />} />
-        <Route path="/schedule" element={<SchedulePage />} />
-      </Routes>
+      <div className="bg-gray-50">
+        <Routes>
+          <Route path="/" element={<FormPage />} />
+          <Route path="/schedule" element={<SchedulePage />} />
+        </Routes>
+      </div>
     </Router>
   );
 }

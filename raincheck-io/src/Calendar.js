@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-const Cal = () => {
+const Cal = ({ selectedCalendarDates, setSelectedCalendarDates }) => {
   const months = {
     January: 31,
     February: 28,
@@ -41,7 +41,6 @@ const Cal = () => {
   const [month, setMonth] = useState(currentMonth);
   const [year, setYear] = useState(currentYear);
   const [dates, setDates] = useState(months[currentMonth]);
-  const [selectedDates, setSelectedDates] = useState([]);
   const [daysArray, setDaysArray] = useState([]);
 
   const getStartDayOfMonth = (year, month) => {
@@ -86,15 +85,18 @@ const Cal = () => {
   };
 
   const toggleSelectedDate = (day) => {
-    if (selectedDates.includes(day)) {
-      setSelectedDates((prevDates) => prevDates.filter((date) => date !== day));
+    if (selectedCalendarDates.includes(day)) {
+      setSelectedCalendarDates((prevDates) =>
+        prevDates.filter((date) => date !== day),
+      );
     } else {
-      setSelectedDates((prevDates) => [...prevDates, day]);
+      setSelectedCalendarDates((prevDates) => [...prevDates, day]);
     }
+    console.log('Selected Dates: ', selectedCalendarDates);
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-8 px-4">
+    <div className="min-h-screen flex items-center justify-center ">
       <div className="max-w-md w-full shadow-lg rounded-lg">
         <div className="md:p-8 p-5 dark:bg-blue-500 bg-white rounded-lg">
           <div className="pl-4 flex items-center justify-between">
@@ -177,7 +179,8 @@ const Cal = () => {
                             dayNumber === todayDate &&
                             month === currentMonth &&
                             year === currentYear;
-                          const isSelected = selectedDates.includes(dayNumber);
+                          const isSelected =
+                            selectedCalendarDates.includes(dayNumber);
                           const dayClass = isSelected
                             ? 'text-white bg-blue-700 rounded-lg'
                             : 'text-gray-500 dark:text-gray-100';
@@ -213,7 +216,7 @@ const Cal = () => {
           </div>
           <button
             className="mt-4 bg-blue-100 hover:bg-blue-700 hover:text-white transition-colors duration-300 text-blue-500 px-4 py-2 rounded"
-            onClick={() => setSelectedDates([])}
+            onClick={() => setSelectedCalendarDates([])}
           >
             Clear All Dates
           </button>

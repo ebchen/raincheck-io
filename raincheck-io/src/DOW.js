@@ -3,8 +3,8 @@ import { useState } from 'react';
 const DOW = () => {
   const [dates, setDates] = useState(7);
   const [selectedDates, setSelectedDates] = useState([]);
-  const [startDOW, setStartDOW] = useState("Mo");
-  const dOW = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+  const [startDOW, setStartDOW] = useState('Mo');
+  const dOW = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
 
   const daysArray = Array.from({ length: dates }, (_, i) => i + 1);
 
@@ -17,7 +17,7 @@ const DOW = () => {
   };
 
   return (
-    <div class="min-h-screen flex items-center justify-center py-8 px-4">
+    <div class="min-h-screen flex items-center justify-center py-8 ">
       <div class="max-w-md w-full shadow-lg rounded-lg">
         <div class="md:p-8 p-5 dark:bg-blue-500 bg-white rounded-lg">
           <div class="pl-4 flex items-center justify-between">
@@ -32,18 +32,18 @@ const DOW = () => {
             <table class="w-full">
               <thead>
                 <tr>
-                {dOW.map((_, index) => {
-                  const dayIndex = (dOW.indexOf(startDOW) + index) % 7;
-                  return (
-                    <th key={dOW[dayIndex]}>
-                      <div class="w-full flex justify-center">
-                        <p class="text-base font-medium text-center text-gray-800 dark:text-gray-100">
-                          {dOW[dayIndex]}
-                        </p>
-                      </div>
-                    </th>
-                  );
-                })}
+                  {dOW.map((_, index) => {
+                    const dayIndex = (dOW.indexOf(startDOW) + index) % 7;
+                    return (
+                      <th key={dOW[dayIndex]}>
+                        <div class="w-full flex justify-center">
+                          <p class="text-base font-medium text-center text-gray-800 dark:text-gray-100">
+                            {dOW[dayIndex]}
+                          </p>
+                        </div>
+                      </th>
+                    );
+                  })}
                 </tr>
               </thead>
               <tbody>

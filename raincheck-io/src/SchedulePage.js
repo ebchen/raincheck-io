@@ -11,25 +11,50 @@ import StatusComponent from './StatusComponent';
 
 const SchedulePage = () => {
   const location = useLocation();
-  const { eventName } = location.state || { eventName: 'Default Event' }; // Use a default or an empty string if no state is passed
-  console.log('Event Name:', eventName);
+  const { eventName, startTime, endTime } = location.state || {
+    eventName: 'Default Event',
+    startTime: '9:00 AM',
+    endTime: '5:00 PM',
+  };
+
+  const selectedCalendarDates = [
+    [2023, 12, 18],
+    [2023, 12, 19],
+    [2023, 12, 20],
+  ];
+
   const [myName, setMyName] = useState('Cheric');
-  // Starting date for the schedule
-  const startDate = new Date(2023, 7, 2); // Assuming the start date is August 2, 2023
-  const days = ['Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Mon'];
-  const hours = [
-    '9:00AM',
-    '9:30AM',
-    '10:00AM',
-    '10:30AM',
-    '11:00AM',
-    '11:30AM',
-    '12:00PM',
-    '12:30PM',
-    '1:00PM',
-    '1:30PM',
-    '2:00PM',
-  ]; // Doubled for each hour
+
+  const sortedDates = selectedCalendarDates.sort();
+  console.log('Sorted Dates:', sortedDates);
+  const startDate = new Date(sortedDates[0]);
+  const days = sortedDates.map((date) => {
+    const d = new Date(date);
+    return d.toLocaleDateString('en-US', { weekday: 'short' });
+  });
+
+  // const startDate = new Date(2023, 7, 2);
+
+  const calculateHoursArray = (start, end) => {
+    let result = [];
+    let currentDate = new Date(`01/01/2000 ${start}`);
+    const endDate = new Date(`01/01/2000 ${end}`);
+
+    do {
+      result.push(
+        currentDate.toLocaleTimeString('en-US', {
+          hour: 'numeric',
+          minute: 'numeric',
+          hour12: true,
+        }),
+      );
+      currentDate = new Date(currentDate.getTime() + 30 * 60000); // Add 30 minutes
+    } while (currentDate <= endDate);
+
+    return result;
+  };
+
+  const [hours, setHours] = useState(calculateHoursArray(startTime, endTime));
 
   // Helper function to format the date in "MMM D" format
   const formatDate = (date) => {
@@ -44,7 +69,16 @@ const SchedulePage = () => {
   };
 
   const generateRandomAvailability = (myName) => {
-    const names = ['Sahitya', 'Era', 'Jeff', 'Eric'];
+    const names = [
+      'Sahitya',
+      'Era',
+      'Jeff',
+      'Eric',
+      'Ethan',
+      'Rajiv',
+      'Ria',
+      'Zhang',
+    ];
     const dummyData = {};
 
     days.forEach((day) => {
@@ -127,18 +161,23 @@ const SchedulePage = () => {
   };
 
   return (
-    <div className="flex flex-row justify-around items-center w-full max-w-6xl mx-auto p-4 bg-gray-50">
+    <div className="flex flex-row items-center w-full h-full max-w-6xl mx-auto p-4">
       <Sidebar />
       <div className="mx-4"></div>
-      <div className="flex flex-col justify-center items-center pt-4">
+      <div className="flex flex-col w-full justify-center items-center pt-4">
         <div className="flex flex-row items-center justify-start w-full">
           <h1 className="text-4xl font-bold mb-3 p-4">{eventName}</h1>
           <CopyLinkComponent eventName={eventName} />
         </div>
-        <div className="flex flex-row justify-center items-start">
-          <AvailabilityComponent />
-          <div className="mx-4"></div>
-          <GroupAvailabilityComponent />
+        <div className="flex flex-row justify-center items-start w-full">
+          <div className="flex w-1/3 mr-4">
+            <AvailabilityComponent />
+          </div>
+
+          <div className=""></div>
+          <div className="flex w-2/3 ml-4">
+            <GroupAvailabilityComponent />
+          </div>
         </div>
 
         {/* Schedule and Status components */}
@@ -158,7 +197,7 @@ const SchedulePage = () => {
               myName={myName}
             />
           </div>
-          <div className="w-1/3 min-w-[300px] max-w-[400px] h-[300px] overflow-auto">
+          <div className="w-1/3 min-w-[300px] max-w-[400px] h-[432px] shadow-lg rounded-md">
             <StatusComponent
               hoveredTimeSlot={hoveredTimeSlot}
               availabilityData={yourAvailabilityData}

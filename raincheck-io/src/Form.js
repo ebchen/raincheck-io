@@ -1,9 +1,16 @@
 import React, { useState } from 'react';
 
-const Form = ({ setCalendarMode, handleSubmit, eventName, setEventName }) => {
+const Form = ({
+  setCalendarMode,
+  handleSubmit,
+  eventName,
+  setEventName,
+  startTime,
+  setStartTime,
+  endTime,
+  setEndTime,
+}) => {
   const [calendarType, setCalendarType] = useState('specificDates');
-  const [startTime, setStartTime] = useState('09:00 AM');
-  const [endTime, setEndTime] = useState('05:00 PM');
   const [error, setError] = useState(false);
   const [timezone, setTimezone] = useState('EST (Eastern Standard Time)');
   const [wantNotifications, setWantNotifications] = useState(false);
@@ -104,8 +111,8 @@ const Form = ({ setCalendarMode, handleSubmit, eventName, setEventName }) => {
   ];
 
   return (
-    <div className="w-full bg-white rounded-md shadow-md items-center justify-center py-8 px-8">
-      <h2 className="text-3xl font-bold mb-3 p-4 text-center">
+    <div className="w-full bg-white shadow-lg rounded-lg items-center justify-center py-4 px-8">
+      <h2 className="text-3xl font-bold mb-3 px-4 pt-4 pb-3 text-center">
         Create a New Event
       </h2>
       <div className="flex justify-center">

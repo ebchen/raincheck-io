@@ -16,26 +16,26 @@ const CopyIcon = ({ handleClick, isCopied }) => {
   );
 };
 
-// hardcoded for now
-const people = ['Sahitya', 'Eric', 'Era', 'Jeffrey'];
+const People = ({ prepopulatedNames, shownNames, setShownNames }) => {
+  const [selectedChips, setSelectedChips] = useState(shownNames);
 
-const People = () => {
-  const [selectedChips, setSelectedChips] = useState(['Sahitya', 'Eric']);
+  useEffect(() => {
+    setSelectedChips(shownNames);
+  }, [shownNames]);
 
   const handleChipClick = (person) => {
-    // Toggle the selected state of the clicked chip
-    setSelectedChips((prevSelectedChips) =>
-      prevSelectedChips.includes(person)
-        ? prevSelectedChips.filter((chip) => chip !== person)
-        : [...prevSelectedChips, person],
-    );
+    const updatedShownNames = shownNames.includes(person)
+      ? shownNames.filter((name) => name !== person)
+      : [...shownNames, person];
+
+    setShownNames(updatedShownNames);
   };
 
   return (
     <div className="border border-blue-500 text-blue-500 rounded-md text-base p-4 w-1/2 mb-4 mr-2">
       <p className="text-center font-bold mb-2">People</p>
       <div className="flex flex-wrap gap-2">
-        {people.map((person, index) => (
+        {prepopulatedNames.map((person, index) => (
           <Chip
             key={index}
             label={person}
@@ -58,39 +58,65 @@ const People = () => {
 
 // hardcoded for now
 const initialAvailabilityData = [
-  { time: 'Wed, Aug 2: 9:00AM - 10:30AM', peopleAvailable: 3 },
-  { time: 'Sat, Aug 5: 1:00PM - 3:30PM', peopleAvailable: 5 },
-  { time: 'Tues, Aug 8: 2:00PM - 3:00PM', peopleAvailable: 2 },
+  { time: 'Mon, Dec 18: 1:00PM - 2:00PM', peopleAvailable: 6 },
+  { time: 'Tue, Dec 19: 9:00AM - 10:30AM', peopleAvailable: 5 },
+  { time: 'Wed, Dec 20: 2:00PM - 3:00PM', peopleAvailable: 4 },
 ];
 
-const BestTimesComponent = ({ availabilityData, totalPeople }) => {
+const BestTimesComponent = ({ yourAvailabilityData, shownNames }) => {
   const [copiedIndex, setCopiedIndex] = useState(null);
+  const [bestTimes, setBestTimes] = useState([]);
+
+  useEffect(() => {
+    // Function to calculate the fraction of available people for each time slot
+    const calculateBestTimes = () => {
+      let availabilityCounts = [];
+
+      for (const [timeSlot, availabilities] of Object.entries(
+        yourAvailabilityData,
+      )) {
+        let availableCount = availabilities.filter(
+          (person) => shownNames.includes(person.name) && person.isAvailable,
+        ).length;
+        let fractionAvailable = availableCount / shownNames.length;
+        availabilityCounts.push({
+          time: timeSlot,
+          fractionAvailable,
+          peopleAvailable: availableCount,
+        });
+      }
+
+      // Sort by fractionAvailable and get top 3 times
+      availabilityCounts.sort(
+        (a, b) => b.fractionAvailable - a.fractionAvailable,
+      );
+      return availabilityCounts.slice(0, 3); // Get top 3 times
+    };
+
+    setBestTimes(calculateBestTimes());
+  }, [yourAvailabilityData, shownNames]);
 
   const copyToClipboard = (index, time) => {
     navigator.clipboard.writeText(time);
     setCopiedIndex(index);
-    setTimeout(() => {
-      setCopiedIndex(null);
-    }, 3000);
+    setTimeout(() => setCopiedIndex(null), 3000);
   };
 
   return (
     <div className="border border-blue-500 text-blue-500 rounded-md text-base p-4 w-1/2 mb-4 ml-2">
       <p className="text-center font-bold mb-2">Best Times</p>
       <ul className="pl-0">
-        {availabilityData.map((entry, index) => (
+        {bestTimes.map((entry, index) => (
           <li
             key={index}
             className="text-black flex items-center justify-between text-base mb-2"
           >
             <div className="flex items-center">
               <div className="bg-blue-500 text-white font-bold rounded-full px-2 py-1 text-xs mr-2">
-                {`${entry.peopleAvailable}/${totalPeople}`}
+                {`${entry.peopleAvailable}/${shownNames.length}`}
               </div>
-
-              <span className="ml-2 text-sm">{`${entry.time}`}</span>
+              <span className="ml-2 text-sm">{entry.time}</span>
             </div>
-
             <CopyIcon
               handleClick={() => copyToClipboard(index, entry.time)}
               isCopied={copiedIndex === index}
@@ -102,19 +128,19 @@ const BestTimesComponent = ({ availabilityData, totalPeople }) => {
   );
 };
 
-const GroupAvailabilityComponent = () => {
+const GroupAvailabilityComponent = ({
+  prepopulatedNames,
+  shownNames,
+  setShownNames,
+  yourAvailabilityData,
+}) => {
   // the availability data
   const [availabilityData, setAvailabilityData] = useState(
     initialAvailabilityData,
   );
   // total people
-  const [totalPeople, setTotalPeople] = useState(10);
 
-  // update total number of people later
-  const updateTotalPeople = () => {
-    const newTotalPeople = 4;
-    setTotalPeople(newTotalPeople);
-  };
+  const [totalPeople, setTotalPeople] = useState(shownNames.length);
 
   // update availability data later
   const updateAvailabilityData = () => {
@@ -123,7 +149,6 @@ const GroupAvailabilityComponent = () => {
   };
 
   useEffect(() => {
-    updateTotalPeople();
     updateAvailabilityData();
   }, []);
 
@@ -133,10 +158,16 @@ const GroupAvailabilityComponent = () => {
         Group Availability
       </h2>
       <div className="flex">
-        <People />
+        <People
+          prepopulatedNames={prepopulatedNames}
+          shownNames={shownNames}
+          setShownNames={setShownNames}
+        />
         <BestTimesComponent
           availabilityData={availabilityData}
-          totalPeople={totalPeople}
+          totalPeople={shownNames.length}
+          shownNames={shownNames}
+          yourAvailabilityData={yourAvailabilityData}
         />
       </div>
     </div>

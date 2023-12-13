@@ -11,7 +11,9 @@ const ScheduleComponent = ({
   selectedCells,
   setSelectedCells,
   availabilities,
+  shownNames,
   myName,
+  gcalTimes,
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState(null);
@@ -118,40 +120,46 @@ const ScheduleComponent = ({
   const getCellBackgroundColor = (dateTimeKey) => {
     const cellAvailability = availabilities[dateTimeKey] || [];
     const othersCount = cellAvailability.filter(
-      (person) => person.name !== myName && person.isAvailable,
+      (person) => shownNames.includes(person.name) && person.isAvailable,
     ).length;
 
-    if (selectedCells[dateTimeKey]) {
+    // Check if the cell is in gcalTimes and not selected
+    const isInGcalTimes = gcalTimes.includes(dateTimeKey);
+    const isSelected = selectedCells[dateTimeKey];
+
+    if (isSelected) {
+      // Existing logic for selected cells
       const totalOthers = cellAvailability.length;
       const intensity = totalOthers > 0 ? othersCount / totalOthers : 0;
-
-      // HSL values
       const hue = 142;
       const saturation = 70;
-      const startLightness = 90;
+      const startLightness = 85;
       const endLightness = 15;
-
       const lightness = Math.floor(
         lerp(startLightness, endLightness, intensity),
       );
-
       return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+    } else if (isInGcalTimes) {
+      // Light blue color for gcalTimes
+      return 'hsl(0, 78%, 89%)'; // Light blue color
     } else {
+      // Existing logic for other cells
       if (othersCount > 0) {
         const greyIntensity = Math.min(
           othersCount / cellAvailability.length,
           1,
         );
-        const greyValue = Math.floor(255 - greyIntensity * 100).toString(16);
+        const greyValue = Math.floor(240 - greyIntensity * 100).toString(16);
         return `#${greyValue}${greyValue}${greyValue}`;
       } else {
         return 'white';
       }
     }
   };
+  const isInGcalTimes = (dateTimeKey) => gcalTimes.includes(dateTimeKey);
 
   return (
-    <div className="flex shadow-lg rounded-md p-4 bg-white">
+    <div className="flex shadow-lg rounded-md px-4 pt-6 pb-6 bg-white">
       <div className="flex flex-col text-sm pr-2">
         {/* Empty div to align the first timestamp with the first cell */}
         <div style={{ height: '24px' }}></div>
@@ -167,7 +175,7 @@ const ScheduleComponent = ({
             </div>
           ))}
         {/* Empty div at the bottom to ensure the last timestamp aligns correctly */}
-        <div style={{ height: '15px' }}></div>
+        {/* <div style={{ height: '15px' }}></div> */}
       </div>
       <div className="flex flex-col flex-1">
         <div className="grid grid-cols-7 gap-1 mb-2">
@@ -182,11 +190,6 @@ const ScheduleComponent = ({
           {days.map((day, dayIndex) => (
             <div key={dayIndex} className="flex flex-col">
               {hours.map((hour, hourIndex) => {
-                if (hourIndex === hours.length - 1) {
-                  // Skip rendering for the last 30-minute block
-                  return null;
-                }
-
                 const date = new Date(startDate);
                 date.setDate(startDate.getDate() + dayIndex);
                 const dateTimeKey = `${formatDate(date)} ${hour}`;
@@ -195,7 +198,7 @@ const ScheduleComponent = ({
                 return (
                   <div
                     key={hourIndex}
-                    className="flex justify-center items-center border border-gray-300"
+                    className="relative flex justify-center items-center border border-gray-300"
                     style={{
                       width: '80px',
                       height: '30px',
@@ -205,7 +208,19 @@ const ScheduleComponent = ({
                     onMouseEnter={() => handleMouseEnter(day, hour)}
                     onMouseLeave={handleMouseLeave}
                     onMouseUp={handleMouseUp}
-                  ></div>
+                  >
+                    {/* {isInGcalTimes(dateTimeKey) &&
+                      !selectedCells[dateTimeKey] && (
+                        <div
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            background:
+                              'linear-gradient(to top right, transparent 47%, red 47%, red 53%, transparent 53%)',
+                          }}
+                        ></div>
+                      )} */}
+                  </div>
                 );
               })}
             </div>

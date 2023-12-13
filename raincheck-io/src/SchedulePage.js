@@ -26,6 +26,17 @@ const SchedulePage = () => {
       ],
     };
 
+  const [prepopulatedNames, setPrepopulatedNames] = useState([
+    'Sahitya',
+    'Era',
+    'Jeff',
+    'Eric',
+    'Ethan',
+    'Rajiv',
+    'Ria',
+    'Zhang',
+  ]);
+  const [shownNames, setShownNames] = useState(prepopulatedNames);
   const [myName, setMyName] = useState('Cheric');
 
   const sortedDates = selectedCalendarDates.sort();
@@ -72,29 +83,30 @@ const SchedulePage = () => {
   };
 
   const generateRandomAvailability = (myName) => {
-    const names = [
-      'Sahitya',
-      'Era',
-      'Jeff',
-      'Eric',
-      'Ethan',
-      'Rajiv',
-      'Ria',
-      'Zhang',
-    ];
+    const names = prepopulatedNames;
     const dummyData = {};
 
+    // Initial availability set randomly for each person
+    let lastAvailabilities = names.reduce((acc, name) => {
+      acc[name] = Math.random() < 0.5;
+      return acc;
+    }, {});
+
     days.forEach((day) => {
-      hours.forEach((hour) => {
+      hours.forEach((hour, index) => {
         const date = new Date(startDate);
         date.setDate(startDate.getDate() + days.indexOf(day));
         const dateTimeKey = `${formatDate(date)} ${hour}`;
 
-        // Generate random availability for other names
-        dummyData[dateTimeKey] = names.map((name) => ({
-          name: name,
-          isAvailable: Math.random() < 0.5, // 50% chance of being available
-        }));
+        // Generate random availability for other names with continuity
+        dummyData[dateTimeKey] = names.map((name) => {
+          // Adjust the probability based on last availability
+          let probability = lastAvailabilities[name] ? 0.7 : 0.3;
+          let isAvailable = Math.random() < probability;
+          lastAvailabilities[name] = isAvailable;
+
+          return { name: name, isAvailable: isAvailable };
+        });
 
         // Add myName as not available for every time slot
         dummyData[dateTimeKey].push({ name: myName, isAvailable: false });
@@ -129,7 +141,9 @@ const SchedulePage = () => {
   //   const [eventName, setEventName] = useState('CIS5120 Meeting');
   const [hoveredTimeSlot, setHoveredTimeSlot] = useState(null);
   const [selectedCells, setSelectedCells] = useState(new Set());
+  const [gcalTimes, setGcalTimes] = useState([]);
 
+  console.log('selected cells:', selectedCells);
   const toggleAvailability = (timeSlot) => {
     const updatedAvailabilityData = { ...yourAvailabilityData };
     if (updatedAvailabilityData[timeSlot]) {
@@ -173,13 +187,20 @@ const SchedulePage = () => {
           <CopyLinkComponent eventName={eventName} />
         </div>
         <div className="flex flex-row justify-center items-start w-full">
-          <div className="flex w-1/3 mr-4">
-            <AvailabilityComponent />
+          <div className="flex w-1/3 mr-2">
+            <AvailabilityComponent
+              setGcalTimes={setGcalTimes}
+              yourAvailabilityData={yourAvailabilityData}
+            />
           </div>
-
-          <div className=""></div>
-          <div className="flex w-2/3 ml-4">
-            <GroupAvailabilityComponent />
+          <div className="flex w-2/3 ml-2">
+            <GroupAvailabilityComponent
+              prepopulatedNames={prepopulatedNames}
+              shownNames={shownNames}
+              setShownNames={setShownNames}
+              yourAvailabilityData={yourAvailabilityData}
+              setYourAvailabilityData={setYourAvailabilityData}
+            />
           </div>
         </div>
 
@@ -198,12 +219,15 @@ const SchedulePage = () => {
               formatDay={formatDay}
               availabilities={yourAvailabilityData}
               myName={myName}
+              shownNames={shownNames}
+              gcalTimes={gcalTimes}
             />
           </div>
           <div className="w-1/3 min-w-[300px] max-w-[400px] h-[432px] shadow-lg rounded-md">
             <StatusComponent
               hoveredTimeSlot={hoveredTimeSlot}
               availabilityData={yourAvailabilityData}
+              shownNames={shownNames}
             />
           </div>
         </div>
